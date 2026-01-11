@@ -1,9 +1,8 @@
 package midvightmirage.payload.client.mixin;
 
 import midvightmirage.payload.client.mixin.accessor.*;
-import midvightmirage.payload.client.util.screens.ModsScreen;
+import midvightmirage.payload.client.util.screens.AddonsScreen;
 import midvightmirage.payload.client.util.widgets.GuiAddons;
-import midvightmirage.payload.compat.modmenu.config.PayloadConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -34,7 +33,7 @@ public abstract class TitleScreenMixin {
         }
 
         SpriteIconButton button = GuiAddons.addons(
-                20, btn -> Minecraft.getInstance().setScreen(new ModsScreen(Minecraft.getInstance().screen)), true
+                20, btn -> Minecraft.getInstance().setScreen(new AddonsScreen(Minecraft.getInstance().screen)), true
         );
         int var10001 = ((ScreenAccessor)this).payload$getWidth() / 2 - 124;
         l += 48;

@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class ModsScreen extends Screen {
+public class AddonsScreen extends Screen {
     private final Screen parent;
     private int paneWidth;
     private int searchBoxX;
     private EditBox searchBox;
 
-    public ModsScreen(Screen parent) {
+    public AddonsScreen(Screen parent) {
         super(Component.translatable("payload.addons"));
         this.parent = parent;
     }
