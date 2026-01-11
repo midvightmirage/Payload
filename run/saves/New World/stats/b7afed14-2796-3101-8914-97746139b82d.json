@@ -1,0 +1,37 @@
+{
+  "stats": {
+    "minecraft:picked_up": {
+      "minecraft:white_wool": 1,
+      "minecraft:mutton": 2
+    },
+    "minecraft:used": {
+      "minecraft:apple": 1
+    },
+    "minecraft:custom": {
+      "minecraft:traded_with_villager": 47,
+      "minecraft:talked_to_villager": 10,
+      "minecraft:time_since_rest": 6558,
+      "minecraft:walk_one_cm": 6144,
+      "minecraft:leave_game": 1,
+      "minecraft:walk_under_water_one_cm": 242,
+      "minecraft:play_time": 6558,
+      "minecraft:jump": 61,
+      "minecraft:time_since_death": 6558,
+      "minecraft:sprint_one_cm": 11294,
+      "minecraft:open_chest": 2,
+      "minecraft:swim_one_cm": 276,
+      "minecraft:total_world_time": 6779,
+      "minecraft:fly_one_cm": 28033,
+      "minecraft:walk_on_water_one_cm": 427,
+      "minecraft:crouch_one_cm": 162,
+      "minecraft:sneak_time": 95,
+      "minecraft:interact_with_stonecutter": 1
+    },
+    "minecraft:crafted": {
+      "minecraft:stone_shovel": 11,
+      "minecraft:air": 0,
+      "minecraft:emerald": 36
+    }
+  },
+  "DataVersion": 4671
+}

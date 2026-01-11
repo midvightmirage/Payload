@@ -1,0 +1,12 @@
+{
+  "id": "example_tab",
+  "title": {
+    "type": "translatable",
+    "name": "itemGroup.example_group"
+  },
+  "icon": "example:example_item",
+  "displayItems": [
+    "example:example_item",
+    "example:example_block"
+  ]
+}

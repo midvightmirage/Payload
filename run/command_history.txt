@@ -1,0 +1,15 @@
+/give @s payload:example_item
+/time set noon
+/gamerule advance_time false
+/gamerule advance_weather false
+/gamerule spawn_mobs false
+/give @s payload:example_block
+/give @s example:example_item
+/locate biome minecraft:plains
+/tp @s -630 67 -60
+/setworldspawn ~ ~ ~
+/spawnpoint @s ~ ~ ~
+/experience add @s 9999999 levels
+/experience add @s 999999999 levels
+/experience add @s 999999999 points
+/gamerule command_block_output false

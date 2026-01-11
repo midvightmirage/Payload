@@ -1,0 +1,8 @@
+{
+  "id": "example_block",
+  "withItem": true,
+  "type": "stairs",
+  "properties": {
+    "noOcclusion": true
+  }
+}

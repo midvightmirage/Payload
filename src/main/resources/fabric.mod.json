@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "payload",
+  "version": "${version}",
+  "name": "Payload",
+  "description": "",
+  "authors": [
+    "MidvightMirage",
+    "Maksiuhrino"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "icon": "assets/payload/icon.png",
+  "entrypoints": {
+    "fabric-datagen": [
+      "midvightmirage.payload.client.datagen.PayloadDataGenerator"
+    ],
+    "client": [
+      "midvightmirage.payload.client.PayloadClient"
+    ],
+    "main": [
+      "midvightmirage.payload.Payload"
+    ],
+    "modmenu": [
+      "midvightmirage.payload.compat.modmenu.PayloadModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "payload.mixins.json",
+    {
+      "environment": "client",
+      "config": "payload.client.mixins.json"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "modmenu": "*"
+  },
+  "recommends": {
+    "cloth-config": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  }
+}
