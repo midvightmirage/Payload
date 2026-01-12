@@ -32,7 +32,7 @@ public class PayloadHandler {
     }
 
     public static void createPayloadFolder() {
-        Path payloadFolder = FabricLoader.getInstance().getGameDir().resolve("payload\\packs");
+        Path payloadFolder = FabricLoader.getInstance().getGameDir().resolve("payload/packs");
 
         if (!Files.exists(payloadFolder)) {
             try {
@@ -64,7 +64,7 @@ public class PayloadHandler {
     }
 
     public static List<Path> getFolders() {
-        return getFolders(FabricLoader.getInstance().getGameDir().resolve("payload\\packs"));
+        return getFolders(FabricLoader.getInstance().getGameDir().resolve("payload/packs"));
     }
 
     public void loadPack(Path path) throws IOException {
@@ -75,7 +75,7 @@ public class PayloadHandler {
 
     @Deprecated
     public void loadPack(String name) throws IOException {
-        Path packPath = FabricLoader.getInstance().getGameDir().resolve("payload\\packs").resolve(name).resolve("pack.json");
+        Path packPath = FabricLoader.getInstance().getGameDir().resolve("payload/packs").resolve(name).resolve("pack.json");
 
         loadPack(packPath);
     }

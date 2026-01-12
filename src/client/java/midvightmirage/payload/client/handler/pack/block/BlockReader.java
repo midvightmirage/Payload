@@ -90,8 +90,8 @@ public class BlockReader {
 
     public void bootstrap(Path pack, PackInfo info) {
         List<Path> blocks = getItems(
-                FabricLoader.getInstance().getGameDir().resolve("payload\\packs")
-                        .resolve(pack).resolve("data\\blocks")
+                FabricLoader.getInstance().getGameDir().resolve("payload/packs")
+                        .resolve(pack).resolve("data/blocks")
         );
         for (Path path : blocks) {
             try {
