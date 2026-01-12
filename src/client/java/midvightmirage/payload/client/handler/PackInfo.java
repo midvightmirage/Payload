@@ -20,6 +20,7 @@ public class PackInfo {
         private String id;
         private String description;
         private String version;
+        private String icon = "";
         private Map<String, String> dependencies;
 
         public void setName(String name) {
@@ -33,6 +34,9 @@ public class PackInfo {
         }
         public void setVersion(String version) {
             this.version = version;
+        }
+        public void setIcon(String icon) {
+            this.icon = icon;
         }
         public void setDependencies(Map<String, String> dependencies) {
             this.dependencies = dependencies;
@@ -49,6 +53,9 @@ public class PackInfo {
         }
         public String getVersion() {
             return version;
+        }
+        public String getIcon() {
+            return icon;
         }
         public Map<String, String> getDependencies() {
             return dependencies;
