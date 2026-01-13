@@ -2,6 +2,8 @@ package midvightmirage.payload.client.util.screens;
 
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.ModMenuScreenTexts;
+import midvightmirage.payload.client.handler.PackInfo;
+import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.widgets.component.AddonComponent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,14 +16,17 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 public class AddonsScreen extends Screen {
     private final Screen parent;
+    private List<Path> packs;
     private int paneWidth;
     private int searchBoxX;
     private int searchBoxWidth;
     private EditBox searchBox;
-    private AddonComponent addons = new AddonComponent(0, 42);
+    private AddonComponent addons = new AddonComponent(0, 42, null);
 
     public AddonsScreen(Screen parent) {
         super(Component.translatable("payload.addons"));
@@ -58,9 +63,14 @@ public class AddonsScreen extends Screen {
 
         addons.setPosition(this.searchBoxX, 52);
 
+        Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
+
+        assert !packInfos.isEmpty();
+        addons.setIconPath(packInfos.get(packInfos.keySet().stream().findFirst().get()).getPack().getIcon());
+
         addons.renderWidget(graphics, mouseX, mouseY, delta);
 
-        int addonCount = 3;
+        int addonCount = Math.min(packInfos.size(), 3);
 
         for (int i = 0; i < addonCount - 1; i++) {
             addons.changeY((int) (this.height / 4.75F) + 2);

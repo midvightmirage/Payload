@@ -22,8 +22,6 @@ public class PackInfo {
         private String version;
         private String icon = "";
         private Map<String, String> dependencies;
-        private boolean hasUpdate = false;
-        private boolean childHasUpdate = false;
 
         public void setName(String name) {
             this.name = name;
@@ -61,12 +59,6 @@ public class PackInfo {
         }
         public Map<String, String> getDependencies() {
             return dependencies;
-        }
-        public boolean hasUpdate() {
-            return hasUpdate;
-        }
-        public boolean getChildHasUpdate() {
-            return childHasUpdate;
         }
     }
 }

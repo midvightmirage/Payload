@@ -26,6 +26,10 @@ public class PayloadHandler {
     private final Gson gson;
     public static final PayloadHandler INSTANCE = new PayloadHandler();
 
+    public Map<Path, PackInfo> getPackInfos() {
+        return packInfos;
+    }
+
     public PayloadHandler() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.packInfos = new HashMap<>();
