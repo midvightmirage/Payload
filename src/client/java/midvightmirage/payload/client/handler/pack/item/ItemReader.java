@@ -53,8 +53,8 @@ public class ItemReader {
 
     public void bootstrap(Path pack, PackInfo info) {
         List<Path> items = getItems(
-                FabricLoader.getInstance().getGameDir().resolve("payload\\packs")
-                        .resolve(pack).resolve("data\\items")
+                FabricLoader.getInstance().getGameDir().resolve("payload/packs")
+                        .resolve(pack).resolve("data/items")
         );
         for (Path path : items) {
             try {

@@ -57,8 +57,8 @@ public class TabReader {
 
     public void bootstrap(Path pack, PackInfo info) {
         List<Path> items = getTabs(
-                FabricLoader.getInstance().getGameDir().resolve("payload\\packs")
-                        .resolve(pack).resolve("data\\tabs")
+                FabricLoader.getInstance().getGameDir().resolve("payload/packs")
+                        .resolve(pack).resolve("data/tabs")
         );
         for (Path path : items) {
             try {

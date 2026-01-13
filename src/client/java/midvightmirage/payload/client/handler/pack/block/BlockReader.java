@@ -22,14 +22,14 @@ import java.util.stream.Stream;
 import static java.util.Map.entry;
 
 public class BlockReader {
-    public static Map<String, BlockFactory<? extends Block>> blockTypes = Map.of(
-            "air", ctx -> new AirBlock(ctx.props()),
-            "amethyst", ctx -> new AmethystBlock(ctx.props()),
-            "anvil", ctx -> new AnvilBlock(ctx.props()),
-            "normal", ctx -> new Block(ctx.props()),
-            "stairs", ctx -> new StairBlock(Blocks.STONE.defaultBlockState(), ctx.props()),
-            "stair", ctx -> new StairBlock(Blocks.STONE.defaultBlockState(), ctx.props()),
-            "slab", ctx -> new SlabBlock(ctx.props())
+    public static Map<String, BlockFactory<? extends Block>> blockTypes = Map.ofEntries(
+            entry("air", ctx -> new AirBlock(ctx.props())),
+            entry("amethyst", ctx -> new AmethystBlock(ctx.props())),
+            entry("anvil", ctx -> new AnvilBlock(ctx.props())),
+            entry("normal", ctx -> new Block(ctx.props())),
+            entry("stairs", ctx -> new StairBlock(Blocks.STONE.defaultBlockState(), ctx.props())),
+            entry("stair", ctx -> new StairBlock(Blocks.STONE.defaultBlockState(), ctx.props())),
+            entry("slab", ctx -> new SlabBlock(ctx.props()))
     );
     public static Map<String, SoundType> soundTypes = Map.ofEntries(
             entry("minecraft:empty", SoundType.EMPTY),
@@ -90,8 +90,8 @@ public class BlockReader {
 
     public void bootstrap(Path pack, PackInfo info) {
         List<Path> blocks = getItems(
-                FabricLoader.getInstance().getGameDir().resolve("payload\\packs")
-                        .resolve(pack).resolve("data\\blocks")
+                FabricLoader.getInstance().getGameDir().resolve("payload/packs")
+                        .resolve(pack).resolve("data/blocks")
         );
         for (Path path : blocks) {
             try {
