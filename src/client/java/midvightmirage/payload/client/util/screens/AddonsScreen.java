@@ -2,6 +2,7 @@ package midvightmirage.payload.client.util.screens;
 
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.ModMenuScreenTexts;
+import midvightmirage.payload.client.util.widgets.component.AddonComponent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -18,7 +19,9 @@ public class AddonsScreen extends Screen {
     private final Screen parent;
     private int paneWidth;
     private int searchBoxX;
+    private int searchBoxWidth;
     private EditBox searchBox;
+    private AddonComponent addons = new AddonComponent(0, 42);
 
     public AddonsScreen(Screen parent) {
         super(Component.translatable("payload.addons"));
@@ -30,7 +33,7 @@ public class AddonsScreen extends Screen {
         this.paneWidth = this.width / 2 - 8;
         int filtersButtonSize = ModMenuConfig.CONFIG_MODE.getValue() ? 0 : 22;
         int searchWidthMax = this.paneWidth - 32 - filtersButtonSize;
-        int searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
+        this.searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
         this.searchBoxX = this.paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
         this.searchBox = new EditBox(this.font, this.searchBoxX, 22, searchBoxWidth, 20, this.searchBox, ModMenuScreenTexts.SEARCH);
         //this.searchBox.setResponder((text) -> this.modList.filter(text, false));
@@ -49,7 +52,21 @@ public class AddonsScreen extends Screen {
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        graphics.drawCenteredString(this.minecraft.font, this.title, this.width/4, 8, -1);
+        graphics.drawCenteredString(this.minecraft.font, this.title, this.searchBoxX + (this.searchBoxWidth / 2), 8, -1);
+
+        addons.setDimensions(this.searchBoxWidth, (int)(this.height / 4.75F));
+
+        addons.setPosition(this.searchBoxX, 52);
+
+        addons.renderWidget(graphics, mouseX, mouseY, delta);
+
+        int addonCount = 3;
+
+        for (int i = 0; i < addonCount - 1; i++) {
+            addons.changeY((int) (this.height / 4.75F) + 2);
+
+            addons.renderWidget(graphics, mouseX, mouseY, delta);
+        }
     }
 
     @Override
