@@ -35,20 +35,20 @@ public class PayloadPackResources extends PathPackResources {
             false
     );
 
-    PayloadPackResources(PackLocationInfo location, Path root) {
-        super(location, root);
+    PayloadPackResources(PackLocationInfo location, String pack) {
+        super(location, FabricLoader.getInstance().getGameDir().resolve("payload/packs/").resolve(pack));
     }
 
     public static Pack.ResourcesSupplier createResourcesSupplier() {
         return new Pack.ResourcesSupplier() {
             @Override
             public @NonNull PackResources openPrimary(@NonNull PackLocationInfo location) {
-                return new PayloadPackResources(location, FabricLoader.getInstance().getGameDir().resolve("payload/packs/ExamplePack"));
+                return new PayloadPackResources(location, "ExamplePack");
             }
 
             @Override
             public @NonNull PackResources openFull(@NonNull PackLocationInfo location, Pack.@NonNull Metadata metadata) {
-                return new PayloadPackResources(location, FabricLoader.getInstance().getGameDir().resolve("payload/packs/ExamplePack"));
+                return new PayloadPackResources(location, "ExamplePack");
             }
         };
     }

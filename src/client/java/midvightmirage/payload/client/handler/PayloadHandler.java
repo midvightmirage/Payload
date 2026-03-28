@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import midvightmirage.payload.Payload;
 import midvightmirage.payload.client.handler.pack.block.BlockReader;
+import midvightmirage.payload.client.handler.pack.block.type.BlockTypeReader;
 import midvightmirage.payload.client.handler.pack.item.ItemReader;
 import midvightmirage.payload.client.handler.pack.item.tab.TabReader;
 import net.fabricmc.loader.api.FabricLoader;
@@ -99,6 +100,7 @@ public class PayloadHandler {
                 ItemReader.INSTANCE.bootstrap(path, this.packInfo);
                 BlockReader.INSTANCE.bootstrap(path, this.packInfo);
                 TabReader.INSTANCE.bootstrap(path, this.packInfo);
+                BlockTypeReader.INSTANCE.bootstrap(path, this.packInfo);
             } catch (IOException e) {
                 Payload.LOGGER.error(e.getLocalizedMessage());
             }

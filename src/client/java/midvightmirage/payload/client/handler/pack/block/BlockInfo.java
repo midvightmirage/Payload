@@ -1,6 +1,8 @@
 package midvightmirage.payload.client.handler.pack.block;
 
-public class BlockInfo {
+import midvightmirage.payload.client.handler.pack.PackJsonInfo;
+
+public class BlockInfo implements PackJsonInfo {
     private String id;
     private boolean withItem;
     private String type;

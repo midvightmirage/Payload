@@ -1,6 +1,7 @@
 {
   "id": "example_item",
   "properties": {
-
+    "rarity": "epic",
+    "stacksTo": 32
   }
 }

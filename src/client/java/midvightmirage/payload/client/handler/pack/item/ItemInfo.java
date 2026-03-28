@@ -1,6 +1,8 @@
 package midvightmirage.payload.client.handler.pack.item;
 
-public class ItemInfo {
+import midvightmirage.payload.client.handler.pack.PackJsonInfo;
+
+public class ItemInfo implements PackJsonInfo {
     private String id;
     private Properties properties = new Properties();
 

@@ -1,8 +1,10 @@
 package midvightmirage.payload.client.handler.pack.item.tab;
 
+import midvightmirage.payload.client.handler.pack.PackJsonInfo;
+
 import java.util.List;
 
-public class TabInfo {
+public class TabInfo implements PackJsonInfo {
     private String id;
     private Title title = new Title();
     private String icon = "minecraft:air";
