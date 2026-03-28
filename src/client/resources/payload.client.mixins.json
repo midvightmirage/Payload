@@ -2,10 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "midvightmirage.payload.client.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "client": [
     "TitleScreenMixin",
-    "accessor.ScreenAccessor"
+    "accessor.ScreenAccessor",
+    "BuiltInPackSourceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -13,8 +13,9 @@ import net.minecraft.network.chat.Component;
 import java.util.Collection;
 import java.util.LinkedList;
 
+@SuppressWarnings("unchecked")
 public class PayloadConfigScreen {
-    private GsonClothConfigSerializer<ConfigData> configSerializer;
+    private final GsonClothConfigSerializer<ConfigData> configSerializer;
     private ConfigData configData;
 
     public PayloadConfigScreen() {
@@ -43,7 +44,7 @@ public class PayloadConfigScreen {
                 (b) -> configData.getTesting().setDependency(b)
         ).build();
         depends.add(dependency);
-        Collection<BooleanListEntry> toggles = new LinkedList();
+        Collection<BooleanListEntry> toggles = new LinkedList<>();
         depends.addAll(toggles);
         testing.addEntry(depends.build());
 
