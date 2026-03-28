@@ -5,8 +5,9 @@ import com.google.gson.GsonBuilder;
 import midvightmirage.payload.Payload;
 import midvightmirage.payload.registry.item.PayloadItems;
 import midvightmirage.payload.client.handler.PackInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -15,10 +16,12 @@ import net.minecraft.world.item.ItemStack;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.ref.Reference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class TabReader {
@@ -52,7 +55,7 @@ public class TabReader {
     public void loadTab(Path path) throws IOException {
         BufferedReader reader = Files.newBufferedReader(path);
 
-        this.tabInfo = (TabInfo) (this.gson.fromJson(reader, TabInfo.class));
+        this.tabInfo = this.gson.fromJson(reader, TabInfo.class);
     }
 
     public void bootstrap(Path pack, PackInfo info) {
@@ -74,10 +77,10 @@ public class TabReader {
             }
             PayloadItems.PayloadCreativeModeTabs.Builder builder = new PayloadItems.PayloadCreativeModeTabs.Builder(
                     Identifier.fromNamespaceAndPath(info.getPack().getId(), tabInfo.getId()),
-                    FabricItemGroup.builder()
+                    FabricCreativeModeTab.builder()
                             .title(title)
                             .icon(() -> new ItemStack(getItem(tabInfo.getIcon())))
-                            .displayItems((params, output) -> {
+                            .displayItems((_, output) -> {
                                 for (String string : tabInfo.getDisplayItems()) {
                                     output.accept(getItem(string));
                                 }
@@ -89,6 +92,12 @@ public class TabReader {
     }
     private Item getItem(String item) {
         Identifier id = Identifier.tryParse(item);
-        return BuiltInRegistries.ITEM.get(id).get().value();
+        if (id != null) {
+            Optional<Holder.Reference<Item>> itemReference = BuiltInRegistries.ITEM.get(id);
+            if (itemReference.isPresent()) {
+                return itemReference.get().value();
+            }
+        }
+        throw new RuntimeException("Item with id: " + item + " not fond");
     }
 }

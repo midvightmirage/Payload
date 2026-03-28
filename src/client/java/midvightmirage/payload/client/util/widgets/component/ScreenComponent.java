@@ -1,14 +1,17 @@
 package midvightmirage.payload.client.util.widgets.component;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Vector2i;
 
 public abstract class ScreenComponent {
     protected Vector2i position;
     protected Vector2i dimensions;
+    protected Minecraft minecraft;
     public ScreenComponent(Vector2i position, Vector2i dimensions) {
         this.position = position;
         this.dimensions = dimensions;
+        this.minecraft = Minecraft.getInstance();
     }
 
     public ScreenComponent(int x, int y, int width, int height) {
@@ -59,5 +62,5 @@ public abstract class ScreenComponent {
         this.position.y += y;
     }
 
-    public abstract void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta);
+    public abstract void extractWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta);
 }

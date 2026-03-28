@@ -1,6 +1,6 @@
 package midvightmirage.payload.registry.item;
 
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class PayloadItems {
     public static final PayloadItems INSTANCE = new PayloadItems();
-    private Map<Identifier, Item> items = new HashMap<Identifier, Item>();
+    private Map<Identifier, Item> items = new HashMap<>();
     public PayloadItems() {}
     public static <GenericItem extends Item> GenericItem register(Identifier id, Function<Item.Properties, GenericItem> itemFactory, Item.Properties settings) {
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
@@ -80,8 +80,8 @@ public class PayloadItems {
                 Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, key, group);
                 return this;
             }
-            public void addItems(ItemGroupEvents.ModifyEntries t) {
-                ItemGroupEvents.modifyEntriesEvent(key).register(t);
+            public void addItems(CreativeModeTabEvents.ModifyOutput t) {
+                CreativeModeTabEvents.modifyOutputEvent(key).register(t);
             }
             public ResourceKey<CreativeModeTab> key() {
                 return this.key;

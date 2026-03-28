@@ -6,7 +6,7 @@ import midvightmirage.payload.client.handler.PackInfo;
 import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.widgets.component.AddonComponent;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class AddonsScreen extends Screen {
     private final Screen parent;
     private List<Path> packs;
@@ -54,10 +55,10 @@ public class AddonsScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
+    public void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
 
-        graphics.drawCenteredString(this.minecraft.font, this.title, this.searchBoxX + (this.searchBoxWidth / 2), 8, -1);
+        graphics.centeredText(this.minecraft.font, this.title, this.searchBoxX + (this.searchBoxWidth / 2), 8, -1);
 
         addons.setDimensions(this.searchBoxWidth, (int)(this.height / 4.75F));
 
@@ -66,16 +67,19 @@ public class AddonsScreen extends Screen {
         Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
 
         assert !packInfos.isEmpty();
-        addons.setIconPath(packInfos.get(packInfos.keySet().stream().findFirst().get()).getPack().getIcon());
+        PackInfo.Pack pack = packInfos.get(packInfos.keySet().stream().findFirst().get()).getPack();
+        addons.setIconPath(pack.getIcon());
+        addons.setPack(pack);
 
-        addons.renderWidget(graphics, mouseX, mouseY, delta);
+        addons.extractWidget(graphics, mouseX, mouseY, delta);
 
         int addonCount = Math.min(packInfos.size(), 3);
 
         for (int i = 0; i < addonCount - 1; i++) {
             addons.changeY((int) (this.height / 4.75F) + 2);
+            pack = packInfos.get(packInfos.keySet().toArray()[0]).getPack();
 
-            addons.renderWidget(graphics, mouseX, mouseY, delta);
+            addons.extractWidget(graphics, mouseX, mouseY, delta);
         }
     }
 
