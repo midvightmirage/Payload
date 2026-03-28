@@ -1,0 +1,11 @@
+{
+  "pack": {
+    "name": "Example Pack",
+    "id": "example",
+    "description": "Just an example pack",
+    "version": "1.0.0",
+    "dependencies": {
+      "cloth-config": "21.11.153"
+    }
+  }
+}
