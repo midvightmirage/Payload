@@ -21,31 +21,31 @@ public class ItemInfo {
     }
 
     public static class Properties {
-        private float useCooldown;
-        private int stacksTo;
-        private int durability;
+        private Float useCooldown;
+        private Integer stacksTo;
+        private Integer durability;
         private String rarity;
 
-        public float getUseCooldown() {
+        public Float getUseCooldown() {
             return useCooldown;
         }
-        public int getStacksTo() {
+        public Integer getStacksTo() {
             return stacksTo;
         }
-        public int getDurability() {
+        public Integer getDurability() {
             return durability;
         }
         public String getRarity() {
             return rarity;
         }
 
-        public void setUseCooldown(float useCooldown) {
+        public void setUseCooldown(Float useCooldown) {
             this.useCooldown = useCooldown;
         }
-        public void setStacksTo(int stacksTo) {
+        public void setStacksTo(Integer stacksTo) {
             this.stacksTo = stacksTo;
         }
-        public void setDurability(int durability) {
+        public void setDurability(Integer durability) {
             this.durability = durability;
         }
         public void setRarity(String rarity) {

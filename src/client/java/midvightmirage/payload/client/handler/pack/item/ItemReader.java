@@ -62,7 +62,11 @@ public class ItemReader {
             } catch (IOException e) {
                 Payload.LOGGER.error(e.getLocalizedMessage());
             }
-            PayloadItems.INSTANCE.registerItem(Identifier.fromNamespaceAndPath(info.getPack().getId(), itemInfo.getId()), new Item.Properties());
+            Item.Properties props = new Item.Properties();
+            if (itemInfo.getProperties().getUseCooldown() != null) {
+                props.useCooldown(itemInfo.getProperties().getUseCooldown());
+            }
+            PayloadItems.INSTANCE.registerItem(Identifier.fromNamespaceAndPath(info.getPack().getId(), itemInfo.getId()), props);
         }
     }
 }
