@@ -8,8 +8,6 @@ import midvightmirage.payload.client.handler.pack.block.type.BlockTypeReader;
 import midvightmirage.payload.client.handler.pack.item.ItemReader;
 import midvightmirage.payload.client.handler.pack.item.tab.TabReader;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.packs.repository.PackRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,9 +21,10 @@ import java.util.stream.Stream;
 
 public class PayloadHandler {
     private PackInfo packInfo = new PackInfo();
-    private Map<Path, PackInfo> packInfos = null;
+    public static Map<Path, PackInfo> packInfos = new HashMap<>();
     private final Gson gson;
     public static final PayloadHandler INSTANCE = new PayloadHandler();
+    public static List<Path> packs;
 
     public Map<Path, PackInfo> getPackInfos() {
         return packInfos;
@@ -33,7 +32,6 @@ public class PayloadHandler {
 
     public PayloadHandler() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
-        this.packInfos = new HashMap<>();
     }
 
     public static void createPayloadFolder() {
@@ -86,12 +84,12 @@ public class PayloadHandler {
     }
 
     public void bootstrap() {
-        List<Path> packs = getFolders();
+        packs = getFolders();
 
         for (Path path : packs) {
             try {
                 loadPack(path);
-                this.packInfos.put(path, this.packInfo);
+                packInfos.put(path, this.packInfo);
                 for (Map.Entry<String, String> entry : this.packInfo.getPack().getDependencies().entrySet()) {
                     if (!FabricLoader.getInstance().isModLoaded(entry.getKey())) {
                         Payload.LOGGER.error("Mod ID \"{}\" isn't loaded.", entry.getKey());
