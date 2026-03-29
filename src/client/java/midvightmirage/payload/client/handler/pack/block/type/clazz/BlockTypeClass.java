@@ -22,17 +22,19 @@ public class BlockTypeClass extends Block {
     protected List<Property<?>> processedBlockStates;
     protected Map<String, Object> defaultBlockStates;
 
-    public BlockTypeClass(Properties properties, List<BlockTypeInfo.BlockState> blockStates) {
+    public BlockTypeClass(Properties properties, BlockTypeInfo info) {
         super(properties);
-        this.blockStates = blockStates;
-        for (BlockTypeInfo.BlockState blockState : blockStates) {
-            String type = blockState.getType();
-            Property<?> property;
-            if (Objects.equals(type, "int")) {
-                property = IntegerProperty.create(blockState.getNameVar(), blockState.getMin(), blockState.getMax());
-                processedBlockStates.add(property);
+        if (info.getBlockstates() != null) {
+            this.blockStates = info.getBlockstates();
+            for (BlockTypeInfo.BlockState blockState : blockStates) {
+                String type = blockState.getType();
+                Property<?> property;
+                if (Objects.equals(type, "int") && (blockState.getMin() != null && blockState.getMax() != null)) {
+                    property = IntegerProperty.create(blockState.getNameVar(), blockState.getMin(), blockState.getMax());
+                    processedBlockStates.add(property);
+                }
+                defaultBlockStates.put(blockState.getNameVar(), blockState.getDefaultValue());
             }
-            defaultBlockStates.put(blockState.getNameVar(), blockState.getDefaultValue());
         }
     }
 

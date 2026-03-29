@@ -31,6 +31,10 @@ public class BlockReader extends PackJsonReader<BlockReader, BlockInfo> {
             entry("slab", ctx -> new SlabBlock(ctx.props()))
     );
 
+    public static void addBlockType(String name, BlockFactory<? extends Block> blockFactory) {
+        blockTypes.put(name, blockFactory);
+    }
+
     public static final BlockReader INSTANCE = new BlockReader();
 
     public BlockReader() {

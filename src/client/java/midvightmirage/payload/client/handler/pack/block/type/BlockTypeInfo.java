@@ -1,19 +1,29 @@
 package midvightmirage.payload.client.handler.pack.block.type;
 
 import midvightmirage.payload.client.handler.pack.PackJsonInfo;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.apache.commons.lang3.tuple.Triple;
 
+import java.awt.*;
 import java.util.List;
 
 public class BlockTypeInfo implements PackJsonInfo {
+    private Shape shapes;
     private List<BlockState> blockstates;
 
     public List<BlockState> getBlockstates() {
         return blockstates;
     }
 
+    public Shape getShapes() {
+        return shapes;
+    }
+
     public void setBlockstates(List<BlockState> blockstates) {
         this.blockstates = blockstates;
+    }
+
+    public void setShapes(Shape shapes) {
+        this.shapes = shapes;
     }
 
     public static class BlockState {
@@ -62,6 +72,18 @@ public class BlockTypeInfo implements PackJsonInfo {
 
         public void setMax(Integer max) {
             this.max = max;
+        }
+    }
+
+    public static class Shapes {
+        private List<Triple<Integer, Integer, Integer>> collisionShape;
+
+        public List<Triple<Integer, Integer, Integer>> getCollisionShape() {
+            return collisionShape;
+        }
+
+        public void setCollisionShape(List<Triple<Integer, Integer, Integer>> collisionShape) {
+            this.collisionShape = collisionShape;
         }
     }
 }
