@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class AddonsScreen extends Screen {
     private final Screen parent;
-    private List<Path> packs;
     private int searchBoxX;
     private int searchBoxWidth;
     private EditBox searchBox;
@@ -74,8 +73,6 @@ public class AddonsScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, delta);
 
         graphics.centeredText(this.minecraft.font, this.title, this.searchBoxX + (this.searchBoxWidth / 2), 8, -1);
-
-        Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
     }
 
     @Override
