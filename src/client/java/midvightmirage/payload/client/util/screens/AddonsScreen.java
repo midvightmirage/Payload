@@ -16,7 +16,6 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 public class AddonsScreen extends Screen {
@@ -43,7 +42,7 @@ public class AddonsScreen extends Screen {
         this.addRenderableWidget(Button.builder(Component.translatable("payload.addonsFolder"), (_) ->
             Util.getPlatform().openUri(getAddonsFolder().toUri())
         ).bounds(this.width/2-154,this.height-Button.DEFAULT_HEIGHT-8, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build());
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).bounds(this.width/2+4, this.height-Button.DEFAULT_HEIGHT-8, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build());
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, _ -> this.onClose()).bounds(this.width/2+4, this.height-Button.DEFAULT_HEIGHT-8, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build());
 
         Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
 
