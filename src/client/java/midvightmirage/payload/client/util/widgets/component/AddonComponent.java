@@ -1,6 +1,7 @@
 package midvightmirage.payload.client.util.widgets.component;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import midvightmirage.payload.Payload;
 import midvightmirage.payload.client.handler.PackInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -51,9 +52,16 @@ public class AddonComponent extends AbstractWidget {
         if (width < height) {
             widthHeight = width - 10;
         }
+        Identifier icon = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
+        if (iconPath != null && !iconPath.isEmpty()) {
+            icon = Identifier.parse(iconPath);
+        }
+        if (icon == null) {
+            icon = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
+        }
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
-                Identifier.withDefaultNamespace("textures/misc/unknown_pack.png"),
+                icon,
                 getX() + 5,
                 getY() + 5,
                 0, 0,
