@@ -49,7 +49,7 @@ public class AddonsScreen extends Screen {
         int addonCount = Math.min(packInfos.size(), 3);
 
         for (int i = 0; i < addonCount; i++) {
-            AddonComponent addon = new AddonComponent(0, 42, null, i);
+            AddonComponent addon = new AddonComponent(0, 42, null);
             addon.setSize(this.searchBoxWidth, (int)(this.height / 4.75F));
             addon.setPosition(this.searchBoxX, 52);
             assert !packInfos.isEmpty();

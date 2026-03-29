@@ -21,7 +21,7 @@ public class AddonComponent extends AbstractWidget {
     protected Minecraft minecraft;
     private Path path;
 
-    public AddonComponent(int x, int y, String iconPath, int id) {
+    public AddonComponent(int x, int y, String iconPath) {
         super(x, y, 200, 100, Component.empty());
         this.iconPath = iconPath;
         minecraft = Minecraft.getInstance();
@@ -37,6 +37,7 @@ public class AddonComponent extends AbstractWidget {
 
     public void setPack(PackInfo.Pack pack) {
         this.pack = pack;
+        setMessage(Component.literal("Addon instance of " + pack.getName()));
     }
 
     public void setPath(Path path) {
