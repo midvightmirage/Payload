@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 @Environment(EnvType.CLIENT)
 public class GuiAddons {
     public static SpriteIconButton addons(int i, Button.OnPress onPress, boolean bl) {
-        return SpriteIconButton.builder(Component.translatable("options.addons"), onPress, bl)
+        return SpriteIconButton.builder(Component.translatable("payload.addons"), onPress, bl)
                 .width(i)
                 .sprite(Payload.id("icon/addons"), 15, 15)
                 .build();

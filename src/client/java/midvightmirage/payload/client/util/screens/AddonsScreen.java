@@ -4,6 +4,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.ModMenuScreenTexts;
 import midvightmirage.payload.client.handler.PackInfo;
 import midvightmirage.payload.client.handler.PayloadHandler;
+import midvightmirage.payload.client.util.screens.editor.AddonEditorScreen;
 import midvightmirage.payload.client.util.widgets.component.AddonComponent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -37,7 +38,6 @@ public class AddonsScreen extends Screen {
         this.searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
         this.searchBoxX = paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
         this.searchBox = new EditBox(this.font, this.searchBoxX, 22, searchBoxWidth, 20, this.searchBox, ModMenuScreenTexts.SEARCH);
-        //this.searchBox.setResponder((text) -> this.modList.filter(text, false));
         this.addRenderableWidget(searchBox);
         this.addRenderableWidget(Button.builder(Component.translatable("payload.addonsFolder"), (_) ->
             Util.getPlatform().openUri(getAddonsFolder().toUri())
@@ -61,6 +61,13 @@ public class AddonsScreen extends Screen {
             addon.setY(addon.getY() + (((int) (this.height / 4.75F) + 2)) * i);
             this.addRenderableWidget(addon);
         }
+
+        this.addRenderableWidget(
+                new Button.Builder(
+                        Component.translatable("payload.addons.editor"),
+                        _ -> this.minecraft.setScreen(new AddonEditorScreen(this))
+                ).build()
+        );
     }
 
     private static Path getAddonsFolder() {

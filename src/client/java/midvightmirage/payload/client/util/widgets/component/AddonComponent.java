@@ -56,9 +56,6 @@ public class AddonComponent extends AbstractWidget {
         if (iconPath != null && !iconPath.isEmpty()) {
             icon = Identifier.parse(iconPath);
         }
-        if (icon == null) {
-            icon = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
-        }
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 icon,

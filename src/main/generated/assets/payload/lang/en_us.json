@@ -1,4 +1,5 @@
 {
   "payload.addons": "Addons",
+  "payload.addons.editor": "Editor (Beta)",
   "payload.addonsFolder": "Open Addons Folder"
 }
