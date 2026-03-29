@@ -19,8 +19,12 @@ public class BuiltInPackSourceMixin {
     )
     private void payload$registerPackResources(Consumer<Pack> packConsumer, CallbackInfo ci) {
         if(!((BuiltInPackSource) (Object) this instanceof ClientPackSource)) return;
-        if(/*!ParticleInteractionsMod.isFabricResourceLoaderPresent()*/ true) {
-            packConsumer.accept(PayloadPackResources.createPack());
-        }
+        packConsumer.accept(
+                PayloadPackResources.createPack(
+                        PayloadPackResources.createPackLocationInfo("example", "Example Pack"),
+                        "ExamplePack",
+                        PayloadPackResources.createPackMetadata("Just an example pack")
+                )
+        );
     }
 }
