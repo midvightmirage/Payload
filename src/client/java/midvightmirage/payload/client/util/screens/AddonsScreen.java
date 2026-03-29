@@ -19,15 +19,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public class AddonsScreen extends Screen {
     private final Screen parent;
     private List<Path> packs;
-    private int paneWidth;
     private int searchBoxX;
     private int searchBoxWidth;
     private EditBox searchBox;
-    private AddonComponent addons = new AddonComponent(0, 42, null);
 
     public AddonsScreen(Screen parent) {
         super(Component.translatable("payload.addons"));
@@ -36,18 +33,36 @@ public class AddonsScreen extends Screen {
 
     @Override
     protected void init() {
-        this.paneWidth = this.width / 2 - 8;
+        int paneWidth = this.width / 2 - 8;
         int filtersButtonSize = ModMenuConfig.CONFIG_MODE.getValue() ? 0 : 22;
-        int searchWidthMax = this.paneWidth - 32 - filtersButtonSize;
+        int searchWidthMax = paneWidth - 32 - filtersButtonSize;
         this.searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
-        this.searchBoxX = this.paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
+        this.searchBoxX = paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
         this.searchBox = new EditBox(this.font, this.searchBoxX, 22, searchBoxWidth, 20, this.searchBox, ModMenuScreenTexts.SEARCH);
         //this.searchBox.setResponder((text) -> this.modList.filter(text, false));
         this.addRenderableWidget(searchBox);
-        this.addRenderableWidget(Button.builder(Component.translatable("payload.addonsFolder"), (button) ->
+        this.addRenderableWidget(Button.builder(Component.translatable("payload.addonsFolder"), (_) ->
             Util.getPlatform().openUri(getAddonsFolder().toUri())
         ).bounds(this.width/2-154,this.height-Button.DEFAULT_HEIGHT-8, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build());
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).bounds(this.width/2+4, this.height-Button.DEFAULT_HEIGHT-8, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build());
+
+        Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
+
+        int addonCount = Math.min(packInfos.size(), 3);
+
+        for (int i = 0; i < addonCount; i++) {
+            AddonComponent addon = new AddonComponent(0, 42, null, i);
+            addon.setSize(this.searchBoxWidth, (int)(this.height / 4.75F));
+            addon.setPosition(this.searchBoxX, 52);
+            assert !packInfos.isEmpty();
+            Path path = (Path) packInfos.keySet().toArray()[i];
+            addon.setPath(path);
+            PackInfo.Pack pack = packInfos.get(path).getPack();
+            addon.setIconPath(pack.getIcon());
+            addon.setPack(pack);
+            addon.setY(addon.getY() + (((int) (this.height / 4.75F) + 2)) * i);
+            this.addRenderableWidget(addon);
+        }
     }
 
     private static Path getAddonsFolder() {
@@ -60,27 +75,7 @@ public class AddonsScreen extends Screen {
 
         graphics.centeredText(this.minecraft.font, this.title, this.searchBoxX + (this.searchBoxWidth / 2), 8, -1);
 
-        addons.setDimensions(this.searchBoxWidth, (int)(this.height / 4.75F));
-
-        addons.setPosition(this.searchBoxX, 52);
-
         Map<Path, PackInfo> packInfos = PayloadHandler.INSTANCE.getPackInfos();
-
-        assert !packInfos.isEmpty();
-        PackInfo.Pack pack = packInfos.get(packInfos.keySet().stream().findFirst().get()).getPack();
-        addons.setIconPath(pack.getIcon());
-        addons.setPack(pack);
-
-        addons.extractWidget(graphics, mouseX, mouseY, delta);
-
-        int addonCount = Math.min(packInfos.size(), 3);
-
-        for (int i = 0; i < addonCount - 1; i++) {
-            addons.changeY((int) (this.height / 4.75F) + 2);
-            pack = packInfos.get(packInfos.keySet().toArray()[0]).getPack();
-
-            addons.extractWidget(graphics, mouseX, mouseY, delta);
-        }
     }
 
     @Override
