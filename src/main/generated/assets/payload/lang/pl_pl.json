@@ -1,5 +1,9 @@
 {
+  "optional": "Opcjonalne%d",
   "payload.addons": "Dodatki",
+  "payload.addons.creation": "Tworzenie paczki",
+  "payload.addons.editing": "Edytowanie paczki \"%d\"",
   "payload.addons.editor": "Edytor (Beta)",
-  "payload.addonsFolder": "Otwórz Folder z Dodatkami"
+  "payload.addonsFolder": "Otwórz Folder z Dodatkami",
+  "required": "Wymagane%d"
 }

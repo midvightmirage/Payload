@@ -16,11 +16,11 @@ public class PackInfo {
     }
 
     public static class Pack {
-        private String name;
-        private String id;
-        private String description;
-        private String version;
-        private String icon = "";
+        private String name = "";
+        private String id = "";
+        private String description = "";
+        private String version = "";
+        private String icon;
         private Map<String, String> dependencies;
 
         public void setName(String name) {

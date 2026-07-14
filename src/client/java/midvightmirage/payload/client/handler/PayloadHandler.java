@@ -76,6 +76,9 @@ public class PayloadHandler {
         this.packInfo = this.gson.fromJson(reader, PackInfo.class);
     }
 
+    /**
+     * @deprecated Use {@link PayloadHandler#loadPack(Path)}
+     */
     @Deprecated
     public void loadPack(String name) throws IOException {
         Path packPath = FabricLoader.getInstance().getGameDir().resolve("payload/packs").resolve(name).resolve("pack.json");
@@ -90,9 +93,11 @@ public class PayloadHandler {
             try {
                 loadPack(path);
                 packInfos.put(path, this.packInfo);
-                for (Map.Entry<String, String> entry : this.packInfo.getPack().getDependencies().entrySet()) {
-                    if (!FabricLoader.getInstance().isModLoaded(entry.getKey())) {
-                        Payload.LOGGER.error("Mod ID \"{}\" isn't loaded.", entry.getKey());
+                if (this.packInfo.getPack().getDependencies() != null) {
+                    for (Map.Entry<String, String> entry : this.packInfo.getPack().getDependencies().entrySet()) {
+                        if (!FabricLoader.getInstance().isModLoaded(entry.getKey())) {
+                            Payload.LOGGER.error("Mod ID \"{}\" isn't loaded.", entry.getKey());
+                        }
                     }
                 }
                 ItemReader.INSTANCE.bootstrap(path, this.packInfo);

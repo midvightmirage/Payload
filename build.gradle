@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -30,6 +30,19 @@ fabricApi {
 repositories {
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        // forRepositories(fg.repository) // Uncomment when using ForgeGradle
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -40,8 +53,8 @@ dependencies {
 
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    implementation "me.shedaniel.cloth:cloth-config-fabric:26.1.154"
-    implementation "com.terraformersmc:modmenu:18.0.0-alpha.8"
+    implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+    implementation "maven.modrinth:mOgUt4GM:njXb639R"
 }
 
 processResources {

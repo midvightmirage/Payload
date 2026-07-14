@@ -3,7 +3,7 @@
   "id": "payload",
   "version": "${version}",
   "name": "Payload",
-  "description": "",
+  "description": "A simple registry mod for Minecraft.",
   "authors": [
     "MidvightMirage",
     "Maksiuhrino"

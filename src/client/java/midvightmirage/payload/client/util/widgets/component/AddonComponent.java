@@ -1,8 +1,8 @@
 package midvightmirage.payload.client.util.widgets.component;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import midvightmirage.payload.Payload;
 import midvightmirage.payload.client.handler.PackInfo;
+import midvightmirage.payload.client.util.screens.editor.PackEditionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
@@ -21,6 +22,8 @@ public class AddonComponent extends AbstractWidget {
     private PackInfo.Pack pack;
     protected Minecraft minecraft;
     private Path path;
+
+    private boolean inEditorScreen;
 
     public AddonComponent(int x, int y, String iconPath) {
         super(x, y, 200, 100, Component.empty());
@@ -45,8 +48,16 @@ public class AddonComponent extends AbstractWidget {
         this.path = path;
     }
 
+    public void setInEditorScreen(boolean inEditorScreen) {
+        this.inEditorScreen = inEditorScreen;
+    }
+
     @Override
-    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(@Nullable GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        if (graphics == null) return;
+        if (isHoveredOrFocused()) {
+            graphics.outline(getX() - 1, getY() - 1, getWidth() + 2, getHeight() + 2, 0xFFFFFFFF);
+        }
         graphics.fill(getX(), getY(), getRight(), getBottom(), 0xAA343434);
         int widthHeight = height - 10;
         if (width < height) {
@@ -81,8 +92,14 @@ public class AddonComponent extends AbstractWidget {
 
     @Override
     public void onClick(final @NonNull MouseButtonEvent event, final boolean doubleClick) {
-        if (doubleClick) {
-            Util.getPlatform().openUri(path.toUri());
+        if (inEditorScreen) {
+            if (event.button() == 0) {
+                minecraft.setScreenAndShow(new PackEditionScreen(pack, minecraft.gui.screen()));
+            }
+        } else {
+            if (doubleClick && event.button() == 0) {
+                Util.getPlatform().openUri(path.toUri());
+            }
         }
     }
 

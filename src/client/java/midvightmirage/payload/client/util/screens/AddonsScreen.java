@@ -65,8 +65,8 @@ public class AddonsScreen extends Screen {
         this.addRenderableWidget(
                 new Button.Builder(
                         Component.translatable("payload.addons.editor"),
-                        _ -> this.minecraft.setScreen(new AddonEditorScreen(this))
-                ).build()
+                        _ -> this.minecraft.setScreenAndShow(new AddonEditorScreen(this))
+                ).bounds(this.width - 155, 5, 150, 20).build()
         );
     }
 
@@ -83,6 +83,6 @@ public class AddonsScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.parent);
+        this.minecraft.setScreenAndShow(this.parent);
     }
 }

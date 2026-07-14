@@ -19,6 +19,12 @@ public class PayloadLangProvider extends FabricLanguageProvider {
         translationBuilder.add("payload.addons", "Addons");
         translationBuilder.add("payload.addonsFolder", "Open Addons Folder");
         translationBuilder.add("payload.addons.editor", "Editor (Beta)");
+        translationBuilder.add("payload.addons.editing", "Editing pack \"%d\"");
+        translationBuilder.add("payload.addons.creation", "Pack creation");
+
+
+        translationBuilder.add("optional", "Optional%d");
+        translationBuilder.add("required", "Required%d");
     }
 
     public static class PlPlLangProvider extends FabricLanguageProvider {
@@ -31,6 +37,12 @@ public class PayloadLangProvider extends FabricLanguageProvider {
             translationBuilder.add("payload.addons", "Dodatki");
             translationBuilder.add("payload.addonsFolder", "Otwórz Folder z Dodatkami");
             translationBuilder.add("payload.addons.editor", "Edytor (Beta)");
+            translationBuilder.add("payload.addons.editing", "Edytowanie paczki \"%d\"");
+            translationBuilder.add("payload.addons.creation", "Tworzenie paczki");
+
+
+            translationBuilder.add("optional", "Opcjonalne%d");
+            translationBuilder.add("required", "Wymagane%d");
         }
     }
 }

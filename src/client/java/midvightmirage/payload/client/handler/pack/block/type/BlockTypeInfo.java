@@ -3,18 +3,17 @@ package midvightmirage.payload.client.handler.pack.block.type;
 import midvightmirage.payload.client.handler.pack.PackJsonInfo;
 import org.apache.commons.lang3.tuple.Triple;
 
-import java.awt.*;
 import java.util.List;
 
 public class BlockTypeInfo implements PackJsonInfo {
-    private Shape shapes;
+    private Shapes shapes;
     private List<BlockState> blockstates;
 
     public List<BlockState> getBlockstates() {
         return blockstates;
     }
 
-    public Shape getShapes() {
+    public Shapes getShapes() {
         return shapes;
     }
 
@@ -22,7 +21,7 @@ public class BlockTypeInfo implements PackJsonInfo {
         this.blockstates = blockstates;
     }
 
-    public void setShapes(Shape shapes) {
+    public void setShapes(Shapes shapes) {
         this.shapes = shapes;
     }
 
@@ -74,6 +73,7 @@ public class BlockTypeInfo implements PackJsonInfo {
             this.max = max;
         }
     }
+
 
     public static class Shapes {
         private List<Triple<Integer, Integer, Integer>> collisionShape;

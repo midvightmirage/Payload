@@ -1,5 +1,9 @@
 {
+  "optional": "Optional%d",
   "payload.addons": "Addons",
+  "payload.addons.creation": "Pack creation",
+  "payload.addons.editing": "Editing pack \"%d\"",
   "payload.addons.editor": "Editor (Beta)",
-  "payload.addonsFolder": "Open Addons Folder"
+  "payload.addonsFolder": "Open Addons Folder",
+  "required": "Required%d"
 }

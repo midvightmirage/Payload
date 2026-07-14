@@ -33,7 +33,7 @@ public abstract class TitleScreenMixin {
         }
 
         SpriteIconButton button = GuiAddons.addons(
-                20, btn -> Minecraft.getInstance().setScreen(new AddonsScreen(Minecraft.getInstance().screen)), true
+                20, _ -> Minecraft.getInstance().setScreenAndShow(new AddonsScreen(Minecraft.getInstance().gui.screen())), true
         );
         int var10001 = ((ScreenAccessor)this).payload$getWidth() / 2 - 124;
         l += 48;

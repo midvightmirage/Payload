@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 public record GsonClothConfigSerializer<T extends ConfigContent>(String configName, Class<T> configClass, Gson gson) implements ClothConfigSerializer<T> {
@@ -38,22 +37,22 @@ public record GsonClothConfigSerializer<T extends ConfigContent>(String configNa
     @Override
     public T deserialize() throws ClothSerializationException {
         Path configPath = this.getConfigPath();
-        if (Files.exists(configPath, new LinkOption[0])) {
+        if (Files.exists(configPath)) {
             try {
                 BufferedReader reader = Files.newBufferedReader(configPath);
-                T ret = (T) (this.gson.fromJson(reader, this.configClass));
+                T ret = this.gson.fromJson(reader, this.configClass);
                 reader.close();
                 return ret;
             } catch (JsonParseException | IOException e) {
                 throw new ClothSerializationException(e);
             }
         } else {
-            return (T) createDefault();
+            return createDefault();
         }
     }
 
     @Override
     public T createDefault() {
-        return (T) (Utils.constructUnsafely(this.configClass));
+        return Utils.constructUnsafely(this.configClass);
     }
 }

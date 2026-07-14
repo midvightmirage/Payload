@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import java.util.Collection;
 import java.util.LinkedList;
 
-@SuppressWarnings("unchecked")
 public class PayloadConfigScreen {
     private final GsonClothConfigSerializer<ConfigData> configSerializer;
     private ConfigData configData;
