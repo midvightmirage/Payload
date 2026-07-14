@@ -1,9 +1,14 @@
 {
   "optional": "Optional%d",
   "payload.addons": "Addons",
+  "payload.addons.config.pack_desc": "Pack Description",
+  "payload.addons.config.pack_id": "Pack ID",
+  "payload.addons.config.pack_name": "Pack Name",
   "payload.addons.creation": "Pack creation",
   "payload.addons.editing": "Editing pack \"%d\"",
   "payload.addons.editor": "Editor (Beta)",
   "payload.addonsFolder": "Open Addons Folder",
-  "required": "Required%d"
+  "required": "Required%d",
+  "util.field_empty": "The field \"%d\" is empty!",
+  "util.leave_blank": "leave blank, to generate one"
 }

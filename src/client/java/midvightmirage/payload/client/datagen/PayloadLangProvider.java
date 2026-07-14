@@ -22,9 +22,15 @@ public class PayloadLangProvider extends FabricLanguageProvider {
         translationBuilder.add("payload.addons.editing", "Editing pack \"%d\"");
         translationBuilder.add("payload.addons.creation", "Pack creation");
 
+        translationBuilder.add("payload.addons.config.pack_name", "Pack Name");
+        translationBuilder.add("payload.addons.config.pack_desc", "Pack Description");
+        translationBuilder.add("payload.addons.config.pack_id", "Pack ID");
 
         translationBuilder.add("optional", "Optional%d");
         translationBuilder.add("required", "Required%d");
+
+        translationBuilder.add("util.field_empty", "The field \"%d\" is empty!");
+        translationBuilder.add("util.leave_blank", "leave blank, to generate one");
     }
 
     public static class PlPlLangProvider extends FabricLanguageProvider {
@@ -40,9 +46,15 @@ public class PayloadLangProvider extends FabricLanguageProvider {
             translationBuilder.add("payload.addons.editing", "Edytowanie paczki \"%d\"");
             translationBuilder.add("payload.addons.creation", "Tworzenie paczki");
 
+            translationBuilder.add("payload.addons.config.pack_name", "Nazwa Paczki");
+            translationBuilder.add("payload.addons.config.pack_desc", "Opis Paczki");
+            translationBuilder.add("payload.addons.config.pack_id", "ID Paczki");
 
             translationBuilder.add("optional", "Opcjonalne%d");
             translationBuilder.add("required", "Wymagane%d");
+
+            translationBuilder.add("util.field_empty", "Pole \"%d\" jest puste!");
+            translationBuilder.add("util.leave_blank", "zostaw puste, by wygenerować");
         }
     }
 }

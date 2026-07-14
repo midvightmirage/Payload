@@ -1,9 +1,14 @@
 {
   "optional": "Opcjonalne%d",
   "payload.addons": "Dodatki",
+  "payload.addons.config.pack_desc": "Opis Paczki",
+  "payload.addons.config.pack_id": "ID Paczki",
+  "payload.addons.config.pack_name": "Nazwa Paczki",
   "payload.addons.creation": "Tworzenie paczki",
   "payload.addons.editing": "Edytowanie paczki \"%d\"",
   "payload.addons.editor": "Edytor (Beta)",
   "payload.addonsFolder": "Otwórz Folder z Dodatkami",
-  "required": "Wymagane%d"
+  "required": "Wymagane%d",
+  "util.field_empty": "Pole \"%d\" jest puste!",
+  "util.leave_blank": "zostaw puste, by wygenerować"
 }

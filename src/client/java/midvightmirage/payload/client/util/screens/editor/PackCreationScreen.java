@@ -8,6 +8,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
@@ -43,7 +44,7 @@ public class PackCreationScreen extends Screen {
                 y,
                 200,
                 20,
-                Component.literal("Pack Name")
+                Component.translatable("payload.addons.config.pack_name")
         );
 
         this.packName = Pair.of(
@@ -52,7 +53,7 @@ public class PackCreationScreen extends Screen {
                         EXCLAMATION_POPUP,
                         x + 201,
                         y + 6,
-                        Component.literal("The field \"").append(packNameEditBox.getMessage()).append("\" is empty!")
+                        Component.translatable("util.field_empty", packNameEditBox.getMessage())
                 )
         );
         this.packName.getFirst().setCanLoseFocus(true);
@@ -67,7 +68,7 @@ public class PackCreationScreen extends Screen {
                 y,
                 200,
                 20,
-                Component.literal("Pack Description")
+                Component.translatable("payload.addons.config.pack_desc")
         );
 
         this.packDescription = Pair.of(
@@ -76,7 +77,7 @@ public class PackCreationScreen extends Screen {
                         EXCLAMATION_POPUP,
                         x + 201,
                         y + 6,
-                        Component.literal("The field \"").append(packDescriptionEditBox.getMessage()).append("\" is empty!")
+                        Component.translatable("util.field_empty", packDescriptionEditBox.getMessage())
                 )
         );
         this.packDescription.getFirst().setCanLoseFocus(true);
@@ -91,10 +92,10 @@ public class PackCreationScreen extends Screen {
                 y,
                 200,
                 20,
-                Component.literal("Pack ID")
+                Component.translatable("payload.addons.config.pack_id")
         );
         this.packId.setCanLoseFocus(true);
-        this.packId.setHint(Component.translatable("optional", ", leave blank to generate one"));
+        this.packId.setHint(Component.translatable("optional", ", " + I18n.get("util.leave_blank")));
 
         this.createButton = Button.builder(Component.translatable("mco.create.world"), _ -> {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
