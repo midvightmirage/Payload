@@ -29,8 +29,12 @@ public class PayloadLangProvider extends FabricLanguageProvider {
         translationBuilder.add("optional", "Optional%d");
         translationBuilder.add("required", "Required%d");
 
+        translationBuilder.add("opt_comma", "%d, %d");
+
         translationBuilder.add("util.field_empty", "The field \"%d\" is empty!");
         translationBuilder.add("util.leave_blank", "leave blank, to generate one");
+
+        translationBuilder.add("modmenu.descriptionTranslation.payload", "A simple registry mod for Minecraft.");
     }
 
     public static class PlPlLangProvider extends FabricLanguageProvider {
@@ -52,6 +56,8 @@ public class PayloadLangProvider extends FabricLanguageProvider {
 
             translationBuilder.add("optional", "Opcjonalne%d");
             translationBuilder.add("required", "Wymagane%d");
+
+            translationBuilder.add("modmenu.descriptionTranslation.payload", "Prosty w użyciu mod rejestru do Minecraft.");
 
             translationBuilder.add("util.field_empty", "Pole \"%d\" jest puste!");
             translationBuilder.add("util.leave_blank", "zostaw puste, by wygenerować");

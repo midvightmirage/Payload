@@ -1,4 +1,6 @@
 {
+  "modmenu.descriptionTranslation.payload": "A simple registry mod for Minecraft.",
+  "opt_comma": "%d, %d",
   "optional": "Optional%d",
   "payload.addons": "Addons",
   "payload.addons.config.pack_desc": "Pack Description",

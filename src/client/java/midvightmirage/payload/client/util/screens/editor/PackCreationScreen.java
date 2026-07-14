@@ -8,7 +8,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
@@ -95,7 +94,7 @@ public class PackCreationScreen extends Screen {
                 Component.translatable("payload.addons.config.pack_id")
         );
         this.packId.setCanLoseFocus(true);
-        this.packId.setHint(Component.translatable("optional", ", " + I18n.get("util.leave_blank")));
+        this.packId.setHint(Component.translatable("opt_comma", Component.translatable("optional", ""), Component.translatable("util.leave_blank")));
 
         this.createButton = Button.builder(Component.translatable("mco.create.world"), _ -> {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
