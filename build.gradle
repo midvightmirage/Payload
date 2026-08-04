@@ -44,8 +44,6 @@ modrinth {
     ]
 }
 
-version = project.mod_version
-
 base {
     archivesName = project.archives_base_name
 }
