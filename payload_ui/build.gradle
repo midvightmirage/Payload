@@ -13,6 +13,8 @@ loom {
             sourceSet sourceSets.client
         }
     }
+
+    accessWidenerPath = file("src/client/resources/payload_ui.accesswidener")
 }
 
 dependencies {

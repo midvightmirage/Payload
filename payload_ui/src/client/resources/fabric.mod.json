@@ -11,6 +11,7 @@
   "contact": {},
   "license": "MIT",
   "environment": "client",
+  "accessWidener": "payload_ui.accesswidener",
   "entrypoints": {
     "fabric-datagen": [
       "midvightmirage.payload_ui.client.datagen.PayloadUIDataGenerator"
