@@ -1,7 +1,7 @@
 package midvightmirage.payload.client.mixin;
 
 import midvightmirage.payload.client.mixin.accessor.*;
-import midvightmirage.payload.client.util.screens.old.AddonsScreen;
+import midvightmirage.payload.client.util.screens.newType.AddonsScreen;
 import midvightmirage.payload.client.util.widgets.GuiAddons;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
