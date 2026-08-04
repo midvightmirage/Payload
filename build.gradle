@@ -1,10 +1,50 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
     id 'maven-publish'
+    id 'com.modrinth.minotaur' version '2.8.7'
+}
+group = project.maven_group
+version = project.mod_version
+
+import com.modrinth.minotaur.dependencies.ModDependency
+
+def modrinthToken = file("token.txt").readLines().first
+
+tasks.register("modrinthJar", Jar) {
+    archiveClassifier = ""
+
+    dependsOn remapJar
+    dependsOn subprojects.collect { it.tasks.named("jar") }
+
+    from sourceSets.main.output
+
+    into("META-INF/jars") {
+        from {
+            subprojects.collect { project ->
+                project.tasks.named("jar").get().archiveFile
+            }
+        }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+modrinth {
+    token = modrinthToken
+    projectId = "f7iCBGjv"
+    versionNumber = "${version}"
+    versionName = "mc${project.minecraft_version}_${project.mod_version}-${project.mod_version_type}.${project.mod_hotfix}"
+    uploadFile = tasks.named("modrinthJar")
+    gameVersions = [project.minecraft_version]
+    loaders = ['fabric']
+    dependencies = [
+            new ModDependency('P7dR8mSH', 'required'),
+            new ModDependency('9s6osm5g', 'required'),
+            new ModDependency('mOgUt4GM', 'required')
+    ]
 }
 
 version = project.mod_version
-group = project.maven_group
 
 base {
     archivesName = project.archives_base_name
@@ -54,7 +94,15 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
-    implementation "maven.modrinth:mOgUt4GM:njXb639R"
+    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    implementation project(":payload_ui")
+    include project(":payload_ui")
+
+    implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
+    implementation("org.apache.xmlgraphics:batik-codec:1.19")
+    include("org.apache.xmlgraphics:batik-transcoder:1.19")
+    include("org.apache.xmlgraphics:batik-codec:1.19")
 }
 
 processResources {
@@ -70,27 +118,18 @@ processResources {
     }
 }
 
-def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release.set(targetJavaVersion)
-    }
+    it.options.release = 25
 }
 
 java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
@@ -114,5 +153,72 @@ publishing {
         // Notice: This block does NOT have the same function as the block in the top level.
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
+    }
+}
+
+subprojects {
+    apply plugin: 'net.fabricmc.fabric-loom'
+    apply plugin: 'maven-publish'
+
+    repositories {
+        maven { url "https://maven.shedaniel.me/" }
+        maven { url "https://maven.terraformersmc.com/releases/" }
+
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            // forRepositories(fg.repository) // Uncomment when using ForgeGradle
+            filter {
+                includeGroup "maven.modrinth"
+            }
+        }
+    }
+
+    dependencies {
+        // To change the versions see the gradle.properties file
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        //mappings loom.officialMojangMappings()
+        implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+        implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+        implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+        implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
+        implementation("org.apache.xmlgraphics:batik-codec:1.19")
+        include("org.apache.xmlgraphics:batik-transcoder:1.19")
+        include("org.apache.xmlgraphics:batik-codec:1.19")
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 25
+    }
+
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
+    }
+
+    processResources {
+        inputs.property "version", project.version
+        inputs.property "minecraft_version", project.minecraft_version
+        inputs.property "loader_version", project.loader_version
+        filteringCharset "UTF-8"
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version,
+                    "minecraft_version": project.minecraft_version,
+                    "loader_version": project.loader_version
+        }
     }
 }

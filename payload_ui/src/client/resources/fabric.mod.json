@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "payload_ui",
+  "version": "1.0.0",
+  "name": "Payload UI",
+  "description": "A simple UI library for the Payload Minecraft mod.",
+  "authors": [
+    "MidvightMirage",
+    "MaxURhino"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "midvightmirage.payload_ui.client.datagen.PayloadUIDataGenerator"
+    ],
+    "client": [
+      "midvightmirage.payload_ui.client.PayloadUIClient"
+    ]
+  },
+  "mixins": [
+    {
+      "environment": "client",
+      "config": "payload_ui.client.mixins.json"
+    }
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "minecraft": "*",
+    "modmenu": "*",
+    "java": ">=25"
+  },
+  "recommends": {
+    "cloth-config": "*",
+    "payload": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": {
+        "id": "payload"
+      }
+    }
+  }
+}

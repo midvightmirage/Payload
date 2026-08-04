@@ -7,3 +7,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+rootProject.name = "Payload"
+
+include 'payload_ui'
