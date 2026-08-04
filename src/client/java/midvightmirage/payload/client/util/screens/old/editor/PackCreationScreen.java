@@ -1,4 +1,4 @@
-package midvightmirage.payload.client.util.screens.editor;
+package midvightmirage.payload.client.util.screens.old.editor;
 
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;

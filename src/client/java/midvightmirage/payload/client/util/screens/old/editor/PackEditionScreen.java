@@ -1,4 +1,4 @@
-package midvightmirage.payload.client.util.screens.editor;
+package midvightmirage.payload.client.util.screens.old.editor;
 
 import midvightmirage.payload.client.handler.PackInfo;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

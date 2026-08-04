@@ -12,4 +12,17 @@ public class ConfigData implements ConfigContent {
     public void setTesting(Testing testing) {
         this.testing = testing;
     }
+
+    public static class Testing implements ConfigContent {
+        private boolean dependency = false;
+
+        public boolean getDependency() {
+            return dependency;
+        }
+
+        public void setDependency(boolean dependency) {
+            this.dependency = dependency;
+        }
+    }
+
 }

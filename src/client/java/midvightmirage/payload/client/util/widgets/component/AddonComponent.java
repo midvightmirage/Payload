@@ -2,7 +2,7 @@ package midvightmirage.payload.client.util.widgets.component;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import midvightmirage.payload.client.handler.PackInfo;
-import midvightmirage.payload.client.util.screens.editor.PackEditionScreen;
+import midvightmirage.payload.client.util.screens.old.editor.PackEditionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;

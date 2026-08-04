@@ -1,10 +1,10 @@
-package midvightmirage.payload.client.util.screens;
+package midvightmirage.payload.client.util.screens.old;
 
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.ModMenuScreenTexts;
 import midvightmirage.payload.client.handler.PackInfo;
 import midvightmirage.payload.client.handler.PayloadHandler;
-import midvightmirage.payload.client.util.screens.editor.AddonEditorScreen;
+import midvightmirage.payload.client.util.screens.old.editor.AddonEditorScreen;
 import midvightmirage.payload.client.util.widgets.component.AddonComponent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

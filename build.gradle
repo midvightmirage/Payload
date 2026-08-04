@@ -94,8 +94,8 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
     implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    implementation project(":payload_ui")
-    include project(":payload_ui")
+    implementation project(path: ":payload_ui", configuration: "namedElements")
+    include project(path: ":payload_ui", configuration: "namedElements")
 
     implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
     implementation("org.apache.xmlgraphics:batik-codec:1.19")
