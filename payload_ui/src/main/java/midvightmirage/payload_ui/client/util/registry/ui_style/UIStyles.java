@@ -1,17 +1,37 @@
 package midvightmirage.payload_ui.client.util.registry.ui_style;
 
-import midvightmirage.payload_ui.client.util.registry.PayloadRegistries;
-import net.minecraft.core.Registry;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.Identifier;
 
-public class UIStyles {
-    public static final UIStyle MINECRAFT = register("minecraft", new MinecraftUIStyle());
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
-    private static UIStyle register(String name, UIStyle style) {
-        return Registry.register(
-                PayloadRegistries.UI_STYLE,
-                Identifier.fromNamespaceAndPath("payload", name),
+public class UIStyles {
+    private static final Map<Identifier, UIStyle> UI_STYLES = new HashMap<>();
+    private static Supplier<Pair<Identifier, UIStyle>> DEFAULT;
+
+    public static final UIStyle MINECRAFT = register("minecraft", new MinecraftUIStyle(), true);
+
+    private static UIStyle register(String name, UIStyle style, boolean isDefault) {
+        Identifier id = Identifier.fromNamespaceAndPath("payload", name);
+        UI_STYLES.put(
+                id,
                 style
         );
+        if (isDefault) {
+            DEFAULT = () -> Pair.of(id, style);
+        }
+        return style;
     }
+
+    public static UIStyle register(String name, UIStyle style) {
+        return register(name, style, false);
+    }
+
+    public static Pair<Identifier, UIStyle> getDefault() {
+        return DEFAULT.get();
+    }
+
+    public static void bootstrap() {}
 }

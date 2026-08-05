@@ -1,7 +1,7 @@
 package midvightmirage.payload_ui.client.util.screen;
 
-import midvightmirage.payload_ui.client.util.registry.PayloadRegistries;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyle;
+import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyles;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ public abstract class PayloadScreen extends Screen {
     }
 
     public PayloadScreen(Screen parent, Component title) {
-        this(parent, PayloadRegistries.getDefault(PayloadRegistries.UI_STYLE), title);
+        this(parent, UIStyles.getDefault().getSecond(), title);
     }
 
     @Override

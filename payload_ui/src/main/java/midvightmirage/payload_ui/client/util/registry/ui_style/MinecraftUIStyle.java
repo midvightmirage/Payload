@@ -102,6 +102,7 @@ public class MinecraftUIStyle extends UIStyle {
                         (VerticalAlignment)   alignment.getOrDefault("vertical", VerticalAlignment.TOP)
                 );
             }
+            case "custom" -> this.createCustom(args);
             default -> super.createObject(screen, type, args);
         }
     }
