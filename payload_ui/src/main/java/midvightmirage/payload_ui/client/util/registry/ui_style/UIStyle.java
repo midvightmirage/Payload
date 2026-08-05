@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2i;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public abstract class UIStyle implements Renderable {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         for (Map<String, Object> objectData : objectsData) {
             Renderable renderable = (Renderable) objectData.get("renderable");
             renderable.extractRenderState(graphics, mouseX, mouseY, a);
