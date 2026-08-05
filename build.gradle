@@ -13,7 +13,7 @@ def modrinthToken = file("token.txt").readLines().first
 tasks.register("modrinthJar", Jar) {
     archiveClassifier = ""
 
-    dependsOn remapJar
+    dependsOn jar
     dependsOn subprojects.collect { it.tasks.named("jar") }
 
     from sourceSets.main.output
