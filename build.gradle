@@ -55,6 +55,7 @@ loom {
         "payload" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
+            sourceSet project(":payload_ui").sourceSets.main
         }
     }
 }

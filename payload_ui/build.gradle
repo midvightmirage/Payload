@@ -7,10 +7,12 @@ group = "midvightmirage.payload_ui"
 
 loom {
     accessWidenerPath = file("src/main/resources/payload_ui.accesswidener")
+    mods {
+        "payload" {
+            sourceSet sourceSets.main
+        }
+    }
 }
-
-sourceSets.main.java.srcDirs = ["src/main"]
-sourceSets.main.resources.srcDirs = ["src/main/resources"]
 
 dependencies {
     // To change the versions see the gradle.properties file
