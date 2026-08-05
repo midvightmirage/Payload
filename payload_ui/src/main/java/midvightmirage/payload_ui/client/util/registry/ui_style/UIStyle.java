@@ -52,8 +52,10 @@ public abstract class UIStyle implements Renderable {
                 Map.of(
                         "data", Map.of(
                                 "label",     label,
-                                "pos",       pos,
-                                "area",      area,
+                                "bounds",    Map.of(
+                                        "pos",  pos,
+                                        "area", area
+                                ),
                                 "color",     color,
                                 "shadow",    shadow,
                                 "alignment", Map.of(
@@ -89,11 +91,12 @@ public abstract class UIStyle implements Renderable {
             }
             case "label" -> {
                 Map<String, Object> alignment = (Map<String, Object>)args.getOrDefault("alignment", new LinkedHashMap<>());
+                Map<String, Vector2i> bounds = (Map<String, Vector2i>)(args.get("bounds"));
                 this.createLabel(
                         screen,
                         (Component)           args.get("label"),
-                        (Vector2i)            args.get("pos"),
-                        (Vector2i)            args.getOrDefault("area", new Vector2i()),
+                                              bounds.get("pos"),
+                                              bounds.getOrDefault("area", new Vector2i()),
                         (Color)               args.getOrDefault("color", Color.WHITE),
                         (boolean)             args.getOrDefault("shadow", false),
                         (HorizontalAlignment) alignment.getOrDefault("horizontal", HorizontalAlignment.LEFT),

@@ -1,14 +1,18 @@
 package midvightmirage.payload_ui.client.util.screen;
 
+import midvightmirage.payload_ui.client.util.PayloadUtil;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyle;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyles;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.awt.*;
+
 public abstract class PayloadScreen extends Screen {
     private final UIStyle style;
     private final Screen parent;
+    private Color backgroundColor = null;
 
     public PayloadScreen(Screen parent, UIStyle style, Component title) {
         super(title);
@@ -28,6 +32,21 @@ public abstract class PayloadScreen extends Screen {
     protected void init(UIStyle style) {}
 
     @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+
+        if (this.backgroundColor != null) {
+            graphics.fill(
+                    0,
+                    0,
+                    graphics.guiWidth(),
+                    graphics.guiHeight(),
+                    PayloadUtil.toARGB(this.backgroundColor)
+            );
+        }
+    }
+
+    @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         super.extractRenderState(graphics, mouseX, mouseY, a);
 
@@ -37,5 +56,9 @@ public abstract class PayloadScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.gui.setScreen(this.parent);
+    }
+
+    protected void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }
