@@ -30,11 +30,10 @@
     "fabricloader": "*",
     "fabric-api": "*",
     "minecraft": "*",
-    "modmenu": "*",
-    "java": ">=25"
+    "java": ">=25",
+    "cloth-config": "*"
   },
   "recommends": {
-    "cloth-config": "*",
     "payload": "*"
   },
   "custom": {

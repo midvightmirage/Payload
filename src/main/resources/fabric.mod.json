@@ -37,10 +37,7 @@
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",
     "minecraft": "${minecraft_version}",
-    "modmenu": "*",
-    "java": ">=25"
-  },
-  "recommends": {
+    "java": ">=25",
     "cloth-config": "*"
   },
   "custom": {
