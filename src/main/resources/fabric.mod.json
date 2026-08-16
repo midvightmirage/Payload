@@ -26,6 +26,7 @@
       "midvightmirage.payload.compat.modmenu.PayloadModMenuCompat"
     ]
   },
+  "accessWidener": "payload.accesswidener",
   "mixins": [
     "payload.mixins.json",
     {
@@ -42,7 +43,8 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "wip": true
     }
   }
 }

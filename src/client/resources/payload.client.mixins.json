@@ -6,7 +6,8 @@
   "client": [
     "TitleScreenMixin",
     "accessor.ScreenAccessor",
-    "BuiltInPackSourceMixin"
+    "BuiltInPackSourceMixin",
+    "MixinExtraBadges"
   ],
   "injectors": {
     "defaultRequire": 1

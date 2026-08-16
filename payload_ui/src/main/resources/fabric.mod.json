@@ -3,13 +3,6 @@
   "id": "payload_ui",
   "version": "1.0.0",
   "name": "Payload UI",
-  "description": "A simple UI library for the Payload Minecraft mod.",
-  "authors": [
-    "MidvightMirage",
-    "MaxURhino"
-  ],
-  "contact": {},
-  "license": "MIT",
   "environment": "client",
   "accessWidener": "payload_ui.accesswidener",
   "entrypoints": {
@@ -32,9 +25,6 @@
     "minecraft": "*",
     "java": ">=25",
     "cloth-config": "*"
-  },
-  "recommends": {
-    "payload": "*"
   },
   "custom": {
     "modmenu": {

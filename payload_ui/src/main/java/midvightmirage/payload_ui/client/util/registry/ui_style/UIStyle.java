@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.joml.Vector2i;
 import org.jspecify.annotations.NonNull;
 
@@ -22,8 +22,8 @@ import java.util.Map;
 public abstract class UIStyle implements Renderable {
     protected final List<Map<String, Object>> objectsData = new ArrayList<>();
 
-    public abstract void createButton(Screen screen, Component label, Button.OnPress onPress, Vector2i pos, Vector2i size);
-    public void createLabel(Screen screen, Component label, Vector2i pos, Vector2i area, Color color, boolean shadow, HorizontalAlignment horizontal, VerticalAlignment vertical) {
+    public abstract void createButton(Screen screen, MutableComponent label, Button.OnPress onPress, Vector2i pos, Vector2i size);
+    public void createLabel(Screen screen, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean shadow, HorizontalAlignment horizontal, VerticalAlignment vertical) {
         Renderable renderable = (graphics, _, _, _) -> {
             Font font = this.getDefaultFont();
             int textWidth = font.width(label);
@@ -51,6 +51,7 @@ public abstract class UIStyle implements Renderable {
         this.createCustom(
                 Map.of(
                         "data", Map.of(
+                                "type",      "label",
                                 "label",     label,
                                 "bounds",    Map.of(
                                         "pos",  pos,
@@ -67,13 +68,13 @@ public abstract class UIStyle implements Renderable {
                 )
         );
     }
-    public void createLabel(Screen screen, Component label, Vector2i pos, Vector2i area, Color color) {
+    public void createLabel(Screen screen, MutableComponent label, Vector2i pos, Vector2i area, Color color) {
         this.createLabel(screen, label, pos, area, color, false);
     }
-    public void createLabel(Screen screen, Component label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical) {
+    public void createLabel(Screen screen, MutableComponent label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical) {
         this.createLabel(screen, label, pos, area, color, false, horizontal, vertical);
     }
-    public void createLabel(Screen screen, Component label, Vector2i pos, Vector2i area, Color color, boolean shadow) {
+    public void createLabel(Screen screen, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean shadow) {
         this.createLabel(screen, label, pos, area, color, shadow, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
     }
     @SuppressWarnings("unchecked")
@@ -83,7 +84,7 @@ public abstract class UIStyle implements Renderable {
                 Map<String, Vector2i> bounds = (Map<String, Vector2i>)(args.get("bounds"));
                 this.createButton(
                         screen,
-                        (Component) args.get("label"),
+                        (MutableComponent) args.get("label"),
                         (Button.OnPress) args.get("onPress"),
                         bounds.get("pos"),
                         bounds.get("size")
@@ -94,7 +95,7 @@ public abstract class UIStyle implements Renderable {
                 Map<String, Vector2i> bounds = (Map<String, Vector2i>)(args.get("bounds"));
                 this.createLabel(
                         screen,
-                        (Component)           args.get("label"),
+                        (MutableComponent)    args.get("label"),
                                               bounds.get("pos"),
                                               bounds.getOrDefault("area", new Vector2i()),
                         (Color)               args.getOrDefault("color", Color.WHITE),

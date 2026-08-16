@@ -2,32 +2,43 @@ package midvightmirage.payload.client.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.datafixers.util.Pair;
 import midvightmirage.payload.Payload;
 import midvightmirage.payload.client.handler.pack.block.BlockReader;
 import midvightmirage.payload.client.handler.pack.block.type.BlockTypeReader;
 import midvightmirage.payload.client.handler.pack.item.ItemReader;
 import midvightmirage.payload.client.handler.pack.item.tab.TabReader;
+import midvightmirage.payload.client.util.ConversionUtil;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class PayloadHandler {
     private PackInfo packInfo = new PackInfo();
-    public static Map<Path, PackInfo> packInfos = new HashMap<>();
+    public static Map<Path, PackInfo> packInfos = new LinkedHashMap<>();
     private final Gson gson;
     public static final PayloadHandler INSTANCE = new PayloadHandler();
     public static List<Path> packs;
 
     public Map<Path, PackInfo> getPackInfos() {
         return packInfos;
+    }
+
+    public static Path getPackPathFromPack(PackInfo.Pack pack) {
+        List<Pair<Path, PackInfo>> pairs = ConversionUtil.mapToPairs(packInfos);
+
+        for (Pair<Path, PackInfo> pair : pairs) {
+            if (pair.getSecond().getPack() == pack) {
+                return pair.getFirst();
+            }
+        }
+
+        return Path.of("");
     }
 
     public PayloadHandler() {
@@ -67,7 +78,7 @@ public class PayloadHandler {
     }
 
     public static List<Path> getFolders() {
-        return getFolders(FabricLoader.getInstance().getGameDir().resolve("payload/packs"));
+        return getFolders(getPayloadPacksFolder());
     }
 
     public void loadPack(Path path) throws IOException {
@@ -76,12 +87,16 @@ public class PayloadHandler {
         this.packInfo = this.gson.fromJson(reader, PackInfo.class);
     }
 
+    public static Path getPayloadPacksFolder() {
+        return FabricLoader.getInstance().getGameDir().resolve("payload/packs");
+    }
+
     /**
      * @deprecated Use {@link PayloadHandler#loadPack(Path)}
      */
     @Deprecated
     public void loadPack(String name) throws IOException {
-        Path packPath = FabricLoader.getInstance().getGameDir().resolve("payload/packs").resolve(name).resolve("pack.json");
+        Path packPath = getPayloadPacksFolder().resolve(name).resolve("pack.json");
 
         loadPack(packPath);
     }

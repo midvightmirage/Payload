@@ -1,8 +1,11 @@
 package midvightmirage.payload.client.util;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.SoundType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Map.entry;
@@ -47,5 +50,18 @@ public class ConversionUtil {
         public static SoundType getSoundFromString(String string) {
             return soundTypes.get(string);
         }
+    }
+
+    public static <K, V> List<Pair<K, V>> mapToPairs(Map<K, V> map) {
+        List<Pair<K, V>> pairs = new ArrayList<>();
+
+        List<K> keys = new ArrayList<>(map.keySet());
+
+        for (K key : keys) {
+            V value = map.get(key);
+            pairs.add(new Pair<>(key, value));
+        }
+
+        return pairs;
     }
 }

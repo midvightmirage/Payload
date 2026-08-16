@@ -1,7 +1,9 @@
 package midvightmirage.payload.client.util.widgets.component;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import midvightmirage.payload.client.handler.PackInfo;
+import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.screens.old.editor.PackEditionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -9,12 +11,15 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class AddonComponent extends AbstractWidget {
@@ -37,6 +42,20 @@ public class AddonComponent extends AbstractWidget {
 
     public void setIconPath(String iconPath) {
         this.iconPath = iconPath;
+        Identifier id = Identifier.fromNamespaceAndPath("assets_manager", iconPath);
+
+        Path fullIconPath = PayloadHandler.getPackPathFromPack(this.pack).resolve(iconPath);
+
+        try (InputStream stream = Files.newInputStream(fullIconPath)) {
+            NativeImage image = NativeImage.read(stream);
+
+            Minecraft.getInstance().getTextureManager().register(
+                    id,
+                    new DynamicTexture(() -> this.iconPath, image)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setPack(PackInfo.Pack pack) {
@@ -65,7 +84,7 @@ public class AddonComponent extends AbstractWidget {
         }
         Identifier icon = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
         if (iconPath != null && !iconPath.isEmpty()) {
-            icon = Identifier.parse(iconPath);
+            icon = Identifier.fromNamespaceAndPath("assets_manager", iconPath);
         }
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,

@@ -1,0 +1,32 @@
+{
+  title: {
+    label: {
+      type:      "translatable",
+      translate: "payload.addons"
+    },
+    pos:  [0, 0],
+    area: [0, 0]
+  },
+  elements: [
+    /*
+    {
+      type     : "container",
+      container: "vertical",
+      padding  : 2,
+      pos      : [0, 0],
+
+      elements: [
+        {
+          type: "texture"
+        }
+      ]
+    }
+    */
+    {
+      type : "label",
+      pos  : [0, 0],
+      area : ["width", "height"],
+      label: "TEST"
+    }
+  ]
+}
