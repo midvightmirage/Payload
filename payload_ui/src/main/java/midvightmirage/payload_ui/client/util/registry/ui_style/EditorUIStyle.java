@@ -102,10 +102,7 @@ public class EditorUIStyle extends UIStyle {
 
     @Override
     public Style getDefaultStyle(boolean italic, boolean bold, boolean underlined, boolean strikethrough, boolean monospace) {
-        FontCollection collection = switch (monospace) {
-            case true -> FontCollection.SPACE_MONO;
-            case false -> FontCollection.INTER;
-        };
+        FontCollection collection = monospace ? FontCollection.SPACE_MONO : FontCollection.INTER;
         return Style.EMPTY.withFont(collection.getDescription(bold, italic));
     }
 
