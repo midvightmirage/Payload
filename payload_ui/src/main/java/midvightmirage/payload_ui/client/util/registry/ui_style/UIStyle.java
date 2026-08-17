@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector2i;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -19,6 +20,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class UIStyle implements Renderable {
     protected final List<Map<String, Object>> objectsData = new ArrayList<>();
@@ -61,30 +64,37 @@ public abstract class UIStyle implements Renderable {
             }
         };
 
+        this.createSimpleRenderable(screen, parent, renderable, new HashMap<>() {{
+            put("type",           "container");
+            put("container_type", "vertical");
+            put("padding",         padding);
+        }});
+    }
+
+    public void createSimpleRenderable(Screen screen, @Nullable List<Map<String, Object>> parent, Renderable renderable, Map<String, Object> additionalData) {
         this.createCustom(
                 parent,
                 new HashMap<>() {{
-                    put("data",       new HashMap<>() {{
-                        put("type",           "container");
-                        put("container_type", "vertical");
-                        put("padding",         padding);
-                    }});
-                    put("renderable", renderable);
+                    put("data",       additionalData);
+                    put("renderable", renderable    );
                 }}
         );
     }
 
-    public abstract void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Button.OnPress onPress, Vector2i pos, Vector2i size);
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean shadow, HorizontalAlignment horizontal, VerticalAlignment vertical, boolean monospace) {
+    public abstract void createTextBox(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> hint, Vector2i pos, Vector2i size, Consumer<String> onSearch, Supplier<Boolean> shouldClear, int paddingX);
+    public abstract void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Button.OnPress onPress, Vector2i pos, Vector2i size);
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, boolean shadow, HorizontalAlignment horizontal, VerticalAlignment vertical, boolean monospace) {
         Font font = this.getDefaultFont();
 
+        MutableComponent component = label.get();
+
         if (area == null || area.equals(0, 0))
-            area = new Vector2i(font.width(label), font.lineHeight);
+            area = new Vector2i(font.width(label.get()), font.lineHeight);
 
         Vector2i finalArea = area;
 
         Renderable renderable = (graphics, _, _, _) -> {
-            int textWidth = font.width(label);
+            int textWidth = font.width(component);
             int textHeight = font.lineHeight;
 
             int additionalX = switch (horizontal) {
@@ -99,13 +109,7 @@ public abstract class UIStyle implements Renderable {
             };
             graphics.text(
                     font,
-                    label.setStyle(getDefaultStyle(
-                            label.getStyle().isItalic(),
-                            label.getStyle().isBold(),
-                            label.getStyle().isUnderlined(),
-                            label.getStyle().isStrikethrough(),
-                            monospace
-                    )),
+                    this.getWithDefaultStyle(component, monospace),
                     pos.x + additionalX,
                     pos.y + additionalY,
                     PayloadUtil.toARGB(color),
@@ -133,24 +137,82 @@ public abstract class UIStyle implements Renderable {
                 }}
         );
     }
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean monospace, Object isMonospace) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, boolean monospace, Object isMonospace) {
         this.createLabel(screen, parent, label, pos, area, color, false, monospace);
     }
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical, boolean monospace) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical, boolean monospace) {
         this.createLabel(screen, parent, label, pos, area, color, false, horizontal, vertical, monospace);
     }
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean shadow, boolean monospace) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, boolean shadow, boolean monospace) {
         this.createLabel(screen, parent, label, pos, area, color, shadow, HorizontalAlignment.LEFT, VerticalAlignment.TOP, monospace);
     }
 
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color) {
         this.createLabel(screen, parent, label, pos, area, color, false, false);
     }
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, HorizontalAlignment horizontal, VerticalAlignment vertical) {
         this.createLabel(screen, parent, label, pos, area, color, false, horizontal, vertical, false);
     }
-    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, MutableComponent label, Vector2i pos, Vector2i area, Color color, boolean shadow) {
+    public void createLabel(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Vector2i pos, Vector2i area, Color color, boolean shadow) {
         this.createLabel(screen, parent, label, pos, area, color, shadow, HorizontalAlignment.LEFT, VerticalAlignment.TOP, false);
+    }
+    public void createFill(Screen screen, @Nullable List<Map<String, Object>> parent, Vector2i pos, Vector2i size, Color color) {
+        Renderable renderable = (graphics, _, _, _) -> {
+            graphics.fill(
+                    this.getDefaultPipeline(false),
+                    pos.x,
+                    pos.y,
+                    pos.x + size.x,
+                    pos.y + size.y,
+                    PayloadUtil.toARGB(color)
+            );
+        };
+        this.createSimpleRenderable(
+                screen,
+                parent,
+                renderable,
+                new HashMap<>() {{
+                    put("type", "fill");
+                    put("area",  new HashMap<>() {{
+                        put("pos",  pos);
+                        put("size", size);
+                    }});
+                    put("color", color);
+                }}
+        );
+    }
+    public void createImage(Screen screen, @Nullable List<Map<String, Object>> parent, Identifier id, Vector2i pos, Vector2i size, Color tint) {
+        Renderable renderable = (graphics, _, _, _) -> {
+            graphics.blit(
+                    this.getDefaultPipeline(true),
+                    id,
+                    pos.x,
+                    pos.y,
+                    0,
+                    0,
+                    size.x,
+                    size.y,
+                    size.x,
+                    size.y,
+                    PayloadUtil.toARGB(tint)
+            );
+        };
+
+        this.createCustom(
+                parent,
+                new HashMap<>() {{
+                    put("data",       new HashMap<>() {{
+                        put("type", "image");
+                        put("id",    id);
+                        put("area",  new HashMap<>() {{
+                            put("pos",  pos);
+                            put("size", size);
+                        }});
+                        put("tint",  tint);
+                    }});
+                    put("renderable", renderable);
+                }}
+        );
     }
     @SuppressWarnings("unchecked")
     public void createObject(Screen screen, @Nullable List<Map<String, Object>> parent, String type, Map<String, Object> args) throws UnsupportedOperationException {
@@ -160,7 +222,7 @@ public abstract class UIStyle implements Renderable {
                 this.createButton(
                         screen,
                         parent,
-                        (MutableComponent) args.get("label"),
+                        (Supplier<MutableComponent>) args.get("label"),
                         (Button.OnPress) args.get("onPress"),
                         bounds.get("pos"),
                         bounds.get("size")
@@ -172,14 +234,14 @@ public abstract class UIStyle implements Renderable {
                 this.createLabel(
                         screen,
                         parent,
-                        (MutableComponent)    args.get("label"),
-                                              bounds.get("pos"),
-                                              bounds.getOrDefault("area", new Vector2i()),
-                        (Color)               args.getOrDefault("color", Color.WHITE),
-                        (boolean)             args.getOrDefault("shadow", false),
-                        (HorizontalAlignment) alignment.getOrDefault("horizontal", HorizontalAlignment.LEFT),
-                        (VerticalAlignment)   alignment.getOrDefault("vertical", VerticalAlignment.TOP),
-                        (boolean)             args.getOrDefault("monospace", false)
+                        (Supplier<MutableComponent>) args.get("label"),
+                                                     bounds.get("pos"),
+                                                     bounds.getOrDefault("area", new Vector2i()),
+                        (Color)                      args.getOrDefault("color", Color.WHITE),
+                        (boolean)                    args.getOrDefault("shadow", false),
+                        (HorizontalAlignment)        alignment.getOrDefault("horizontal", HorizontalAlignment.LEFT),
+                        (VerticalAlignment)          alignment.getOrDefault("vertical", VerticalAlignment.TOP),
+                        (boolean)                    args.getOrDefault("monospace", false)
                 );
             }
             case "custom" -> this.createCustom(parent, args);
@@ -188,6 +250,9 @@ public abstract class UIStyle implements Renderable {
     }
     public void createCustom(@Nullable List<Map<String, Object>> parent, Map<String, Object> info) {
         Objects.requireNonNullElse(parent, this.objectsData).add(info);
+    }
+    public void clear() {
+        this.objectsData.clear();
     }
 
     @Override
@@ -210,8 +275,8 @@ public abstract class UIStyle implements Renderable {
         BOTTOM
     }
 
-    public RenderPipeline getDefaultPipeline() {
-        return RenderPipelines.GUI_TEXTURED;
+    public RenderPipeline getDefaultPipeline(boolean textured) {
+        return textured ? RenderPipelines.GUI_TEXTURED : RenderPipelines.GUI;
     }
 
     public Font getDefaultFont() {
@@ -220,5 +285,15 @@ public abstract class UIStyle implements Renderable {
 
     public Style getDefaultStyle(boolean italic, boolean bold, boolean underlined, boolean strikethrough, boolean monospace) {
         return Style.EMPTY.withItalic(italic).withBold(bold).withUnderlined(underlined).withStrikethrough(strikethrough);
+    }
+
+    protected final MutableComponent getWithDefaultStyle(MutableComponent component, boolean monospace) {
+        return component.withStyle(getDefaultStyle(
+                component.getStyle().isItalic(),
+                component.getStyle().isBold(),
+                component.getStyle().isUnderlined(),
+                component.getStyle().isStrikethrough(),
+                monospace
+        ));
     }
 }

@@ -1,6 +1,7 @@
 package midvightmirage.payload_ui.client.util;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import midvightmirage.payload_ui.client.PayloadUIClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
@@ -9,19 +10,25 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class SVGLoader {
-    public static BufferedImage loadSVG(Path file, int width, int height) throws Exception {
-        return loadSVG(Files.newInputStream(file), width, height);
+    public static BufferedImage loadSVG(Path file, int width, int height, Color color) throws Exception {
+        return loadSVG(Files.newInputStream(file), width, height, color);
     }
 
-    public static BufferedImage loadSVG(InputStream input, int width, int height) throws Exception {
-        TranscoderInput svgInput = new TranscoderInput(input);
+    public static BufferedImage loadSVG(InputStream input, int width, int height, Color color) throws Exception {
+        String svgText = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        svgText = svgText.replace("currentColor", toHex(color));
+
+        TranscoderInput svgInput = new TranscoderInput(new StringReader(svgText));
 
         BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
         transcoder.addTranscodingHint(
@@ -36,6 +43,10 @@ public class SVGLoader {
         transcoder.transcode(svgInput, null);
 
         return transcoder.getBufferedImage();
+    }
+
+    private static String toHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     public static NativeImage toNativeImage(BufferedImage image) {
@@ -68,6 +79,18 @@ public class SVGLoader {
                 .getTextureManager()
                 .register(id, texture);
         return id;
+    }
+
+    public static Identifier getAndRegisterSVG(Identifier id, Path file, int width, int height, Color color) {
+        try {
+            BufferedImage buffered  = loadSVG(file, width, height, color);
+            NativeImage nativeImage = toNativeImage(buffered);
+            registerImage(nativeImage, id);
+            return id;
+        } catch (Exception e) {
+            PayloadUIClient.LOGGER.error(e.getMessage());
+            return id;
+        }
     }
 
     private static class BufferedImageTranscoder extends ImageTranscoder {

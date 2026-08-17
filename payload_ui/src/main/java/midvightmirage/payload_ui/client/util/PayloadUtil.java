@@ -1,6 +1,7 @@
 package midvightmirage.payload_ui.client.util;
 
 import com.mojang.datafixers.util.Pair;
+import org.joml.Vector2i;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,5 +22,9 @@ public class PayloadUtil {
             pairs.add(new Pair<>(entry.getKey(), entry.getValue()));
         }
         return pairs;
+    }
+
+    public static boolean isMouseIn(Vector2i mousePos, Vector2i pos, Vector2i size) {
+        return (mousePos.x >= pos.x && mousePos.y >= pos.y && mousePos.x <= pos.x + size.x && mousePos.y <= pos.y + size.y);
     }
 }

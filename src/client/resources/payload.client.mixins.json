@@ -7,7 +7,8 @@
     "TitleScreenMixin",
     "accessor.ScreenAccessor",
     "BuiltInPackSourceMixin",
-    "MixinExtraBadges"
+    "MixinExtraBadges",
+    "MixinLoadingOverlay"
   ],
   "injectors": {
     "defaultRequire": 1

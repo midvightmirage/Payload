@@ -15,10 +15,10 @@ public class UIStyles {
         return UI_STYLES;
     }
 
-    public static final UIStyle MINECRAFT = register("minecraft", new MinecraftUIStyle(), true);
-    public static final UIStyle EDITOR = register("editor", new EditorUIStyle());
+    public static final MinecraftUIStyle MINECRAFT = register("minecraft", new MinecraftUIStyle(), true);
+    public static final EditorUIStyle EDITOR = register("editor", new EditorUIStyle());
 
-    private static UIStyle register(String name, UIStyle style, boolean isDefault) {
+    private static <T extends UIStyle> T register(String name, T style, boolean isDefault) {
         Identifier id = Identifier.fromNamespaceAndPath("payload", name);
         UI_STYLES.put(
                 id,
@@ -30,7 +30,7 @@ public class UIStyles {
         return style;
     }
 
-    public static UIStyle register(String name, UIStyle style) {
+    public static <T extends UIStyle> T register(String name, T style) {
         return register(name, style, false);
     }
 

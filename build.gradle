@@ -101,13 +101,7 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
     implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    implementation project(":payload_ui")
-    include project(":payload_ui")
-
-    implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
-    implementation("org.apache.xmlgraphics:batik-codec:1.19")
-    include("org.apache.xmlgraphics:batik-transcoder:1.19")
-    include("org.apache.xmlgraphics:batik-codec:1.19")
+    implementation include(project(":payload_ui"))
 
     include(implementation("maven.modrinth:eUw8l2Vi:6EtkI8pO"))
 }
@@ -195,11 +189,6 @@ subprojects {
 
         implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
         implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-
-        implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
-        implementation("org.apache.xmlgraphics:batik-codec:1.19")
-        include("org.apache.xmlgraphics:batik-transcoder:1.19")
-        include("org.apache.xmlgraphics:batik-codec:1.19")
     }
 
     tasks.withType(JavaCompile).configureEach {
