@@ -7,10 +7,18 @@ group = "midvightmirage.payload_ui"
 
 loom {
     accessWidenerPath = file("src/main/resources/payload_ui.accesswidener")
-    mods {
-        "payload" {
-            sourceSet sourceSets.main
+    if (gradle.startParameter.taskNames.any { !(it.containsIgnoreCase("jar")) }) {
+        mods {
+            "payload" {
+                sourceSet sourceSets.main
+            }
         }
+    }
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
     }
 }
 

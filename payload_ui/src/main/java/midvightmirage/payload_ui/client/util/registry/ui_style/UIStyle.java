@@ -9,7 +9,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import org.joml.Vector2i;
@@ -98,24 +97,20 @@ public abstract class UIStyle implements Renderable {
                 case CENTER -> (finalArea.y - textHeight) / 2;
                 case BOTTOM -> finalArea.y - textHeight;
             };
-            int lastX = 0;
-            for (Component sibling : label.getSiblings()) {
-                graphics.text(
-                        font,
-                        sibling.copy().setStyle(getDefaultStyle(
-                                label.getStyle().isItalic(),
-                                label.getStyle().isBold(),
-                                label.getStyle().isUnderlined(),
-                                label.getStyle().isStrikethrough(),
-                                monospace
-                        )),
-                        pos.x + additionalX + lastX,
-                        pos.y + additionalY,
-                        PayloadUtil.toARGB(color),
-                        shadow
-                );
-                lastX += font.width(sibling);
-            }
+            graphics.text(
+                    font,
+                    label.setStyle(getDefaultStyle(
+                            label.getStyle().isItalic(),
+                            label.getStyle().isBold(),
+                            label.getStyle().isUnderlined(),
+                            label.getStyle().isStrikethrough(),
+                            monospace
+                    )),
+                    pos.x + additionalX,
+                    pos.y + additionalY,
+                    PayloadUtil.toARGB(color),
+                    shadow
+            );
         };
         this.createCustom(
                 parent,

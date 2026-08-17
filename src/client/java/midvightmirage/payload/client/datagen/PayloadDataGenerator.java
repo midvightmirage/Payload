@@ -14,5 +14,6 @@ public class PayloadDataGenerator implements DataGeneratorEntrypoint {
                         new PayloadLangProvider(dataOutput, registryLookup, pack)
         );
         pack.addProvider(PayloadModelProvider::new);
+        pack.addProvider(PayloadFontProvider::new );
     }
 }

@@ -48,7 +48,7 @@ public class EditorUIStyle extends UIStyle {
         );
     }
 
-    private static class FontCollection {
+    public static class FontCollection {
         public static final FontCollection INTER = new FontCollection("inter");
         public static final FontCollection SPACE_MONO = new FontCollection("space_mono");
 
@@ -97,6 +97,13 @@ public class EditorUIStyle extends UIStyle {
             } else {
                 return italic ? getItalic() : getRegular();
             }
+        }
+
+        public FontDescription getDescription(String name) {
+            boolean bold = name.equals("bold") || name.equals("bold_italic");
+            boolean italic = name.equals("italic") || name.equals("bold_italic");
+
+            return getDescription(bold, italic);
         }
     }
 
