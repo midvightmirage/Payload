@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "payload_ui:ttf/inter/inter_bold_italic",
+      "shift": [0.5, 0.5],
+      "size": 18.0,
+      "oversample": 6.0
+    }
+  ]
+}
