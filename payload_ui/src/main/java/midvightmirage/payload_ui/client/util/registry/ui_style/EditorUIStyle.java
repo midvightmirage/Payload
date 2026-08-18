@@ -4,20 +4,22 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import midvightmirage.payload_ui.client.PayloadUIClient;
 import midvightmirage.payload_ui.client.util.PayloadUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.Range;
 import org.joml.Vector2i;
 import org.jspecify.annotations.*;
 import org.lwjgl.glfw.GLFW;
@@ -60,39 +62,56 @@ public class EditorUIStyle extends UIStyle {
                 MutableComponent text = hint.get();
                 Font font = EditorUIStyle.this.getDefaultFont();
 
-                if (!this.isFocused()) {
-                    graphics.text(
-                            font,
-                            getWithDefaultStyle(text, false),
-                            pos.x + ((size.x - font.width(text)) / 2),
-                            pos.y + ((size.y - font.lineHeight) / 2),
-                            0xFFAAAAAA,
-                            false
-                    );
-                } else {
-                    if ((int)(this.frame / 10) % 2 == 1) {
-                        int textWidth = font.width(this.value);
+                if (this.value.isEmpty()) {
+                    if (!this.isFocused()) {
                         graphics.text(
                                 font,
-                                getWithDefaultStyle(Component.literal("I"), true),
-                                pos.x + 5 + paddingX + textWidth,
+                                getWithDefaultStyle(text, false),
+                                pos.x + ((size.x - font.width(text)) / 2),
                                 pos.y + ((size.y - font.lineHeight) / 2),
-                                0xFFFFFFFF,
+                                0xFFAAAAAA,
                                 false
                         );
+                    }
+                } else {
+                    if (this.isFocused()) {
+                        if ((int) (this.frame / 10) % 2 == 1) {
+                            int textWidth = font.width(this.value.substring(0, this.position));
+                            graphics.text(
+                                    font,
+                                    getWithDefaultStyle(Component.literal("I"), false),
+                                    pos.x + 4 + paddingX + textWidth,
+                                    pos.y + ((size.y - font.lineHeight) / 2),
+                                    0xFFFFFFFF,
+                                    false
+                            );
+                        }
                     }
 
-                    if (!this.value.isEmpty()) {
-                        graphics.text(
-                                font,
-                                getWithDefaultStyle(Component.literal(this.value), false),
-                                pos.x + 5 + paddingX,
-                                pos.y + ((size.y - font.lineHeight) / 2),
-                                0xFFFFFFFF,
-                                false
-                        );
-                    }
+                    graphics.text(
+                            font,
+                            getWithDefaultStyle(Component.literal(this.value), false),
+                            pos.x + 5 + paddingX,
+                            pos.y + ((size.y - font.lineHeight) / 2),
+                            0xFFFFFFFF,
+                            false
+                    );
                 }
+            }
+
+            @Override
+            public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+                if (!this.isActive()) {
+                    return false;
+                }
+
+                if (isValidClickButton(event.buttonInfo())) {
+                    boolean isMouseOver = this.isMouseOver(event.x(), event.y());
+                    setFocused(isMouseOver);
+                    return true;
+                }
+
+                return super.mouseClicked(event, doubleClick);
             }
 
             @Override
@@ -106,16 +125,38 @@ public class EditorUIStyle extends UIStyle {
 
             public void setValue(String value) {
                 this.value = value;
+                this.position = value.length();
             }
 
             @Override
             public boolean keyPressed(KeyEvent event) {
                 switch (event.key()) {
                     case GLFW.GLFW_KEY_BACKSPACE -> {
-                        if (!this.value.isEmpty()) {
-                            this.value     = this.value.substring(0, this.value.length() - 1);
-                            this.position -= 1;
+                        if (this.position > 0) {
+                            removeChar(-1);
+                            return true;
                         }
+                    }
+                    case GLFW.GLFW_KEY_DELETE -> {
+                        if (this.position < this.value.length()) {
+                            removeChar(1);
+                            return true;
+                        }
+                    }
+                    case GLFW.GLFW_KEY_LEFT -> {
+                        if (this.position > 0) {
+                            this.position--;
+                            return true;
+                        }
+                    }
+                    case GLFW.GLFW_KEY_RIGHT -> {
+                        if (this.position < this.value.length()) {
+                            this.position++;
+                            return true;
+                        }
+                    }
+                    case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER, GLFW.GLFW_KEY_ESCAPE -> {
+                        this.setFocused(false);
                         return true;
                     }
                     default -> {}
@@ -124,11 +165,24 @@ public class EditorUIStyle extends UIStyle {
                 return super.keyPressed(event);
             }
 
+            private void addString(String string) {
+                this.value = this.value.substring(0, this.position) + string + this.value.substring(this.position);
+                this.position++;
+            }
+
+            private void removeChar(@Range(from = -1, to = 1) int direction) {
+                if (direction < 0) {
+                    this.value = this.value.substring(0, this.position - 1) + this.value.substring(this.position);
+                    this.position--;
+                } else {
+                    this.value = this.value.substring(0, this.position) + this.value.substring(this.position + 1);
+                }
+            }
+
             @Override
             public boolean charTyped(CharacterEvent event) {
                 if (this.isFocused() && this.isActive()) {
-                    this.value    += event.codepointAsString();
-                    this.position += 1;
+                    addString(event.codepointAsString());
                     this.frame     = 0;
                     return true;
                 }
@@ -164,16 +218,77 @@ public class EditorUIStyle extends UIStyle {
     }
 
     @Override
-    public void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Button.OnPress onPress, Vector2i pos, Vector2i size) {
-        Renderable renderable = (graphics, mouseX, mouseY, _) -> {
-            graphics.fill(
-                    pos.x,
-                    pos.y,
-                    pos.x + size.x,
-                    pos.y + size.y,
-                    0xFF666666
-            );
+    public void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Runnable onPress, Vector2i pos, Vector2i size, int paddingX) {
+        var widget = new AbstractWidget(pos.x, pos.y, size.x, size.y, label.get()) {
+            private Runnable onPress;
+
+            @Override
+            protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+                int color = !isHoveredOrFocused() ? 0xFF666666 : 0xFF777777;
+
+                graphics.fill(
+                        pos.x,
+                        pos.y,
+                        pos.x + size.x,
+                        pos.y + size.y,
+                        color
+                );
+
+                MutableComponent component = label.get();
+
+                Font font = EditorUIStyle.this.getDefaultFont();
+                int textWidth = font.width(component);
+                int textHeight = font.lineHeight;
+
+                graphics.text(
+                        font,
+                        EditorUIStyle.this.getWithDefaultStyle(component, false),
+                        pos.x+((size.x - textWidth )/2)+paddingX,
+                        pos.y+((size.y - textHeight)/2),
+                        0xFFFFFFFF,
+                        false
+                );
+
+                this.handleCursor(graphics);
+            }
+
+            @Override
+            protected void updateWidgetNarration(NarrationElementOutput output) {
+
+            }
+
+            private void onPress() {
+                onPress.run();
+            }
+
+            @Override
+            public boolean keyPressed(KeyEvent event) {
+                if (!this.isActive()) {
+                    return false;
+                } else if (event.isSelection()) {
+                    this.playDownSound(Minecraft.getInstance().getSoundManager());
+                    this.onPress();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void onClick(MouseButtonEvent event, boolean doubleClick) {
+                onPress();
+            }
+
+            public Runnable getOnPress() {
+                return onPress;
+            }
+
+            public void setOnPress(Runnable onPress) {
+                this.onPress = onPress;
+            }
         };
+        widget.setOnPress(onPress);
+        screen.addWidget(widget);
 
         this.createCustom(
                 parent,
@@ -188,7 +303,7 @@ public class EditorUIStyle extends UIStyle {
                         }});
 
                     }});
-                    put("renderable", renderable);
+                    put("renderable", widget);
                 }}
         );
     }

@@ -20,7 +20,15 @@ public class PayloadIconRegistry {
 
     public static void bootstrap() {
         if (!registered) {
+            register("layout-grid");
+            register("layout-list");
+            register("menu");
+            register("refresh-cw");
             register("search");
+            register("server-plus");
+            register("square-arrow-right-exit");
+            register("square-pen");
+            register("trash-2");
             register("x");
         }
         registered = true;

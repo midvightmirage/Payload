@@ -47,8 +47,8 @@ public class MinecraftUIStyle extends UIStyle {
     }
 
     @Override
-    public void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Button.OnPress onPress, Vector2i pos, Vector2i size) {
-        Button button = Button.builder(label.get(), onPress).bounds(pos.x, pos.y, size.x, size.y).build();
+    public void createButton(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> label, Runnable onPress, Vector2i pos, Vector2i size, int paddingX) {
+        Button button = Button.builder(label.get(), _ -> onPress.run()).bounds(pos.x, pos.y, size.x, size.y).build();
         screen.addWidget(button);
         this.createCustom(
                 parent,

@@ -1,5 +1,7 @@
 package midvightmirage.payload.client.handler;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 
 public class PackInfo {
@@ -16,48 +18,55 @@ public class PackInfo {
     }
 
     public static class Pack {
-        private String name = "";
+        @Nullable private String name;
         private String id = "";
-        private String description = "";
+        @Nullable private String description;
         private String version = "";
-        private String icon;
-        private Map<String, String> dependencies;
+        @Nullable private String icon;
+        @Nullable private String title;
+        @Nullable private Map<String, String> dependencies;
 
-        public void setName(String name) {
+        public void setName(@Nullable String name) {
             this.name = name;
         }
         public void setId(String id) {
             this.id = id;
         }
-        public void setDescription(String description) {
+        public void setDescription(@Nullable String description) {
             this.description = description;
         }
         public void setVersion(String version) {
             this.version = version;
         }
-        public void setIcon(String icon) {
+        public void setIcon(@Nullable String icon) {
             this.icon = icon;
         }
-        public void setDependencies(Map<String, String> dependencies) {
+        public void setTitle(@Nullable String title) {
+            this.title = title;
+        }
+        public void setDependencies(@Nullable Map<String, String> dependencies) {
             this.dependencies = dependencies;
         }
 
-        public String getName() {
+        public @Nullable String getName() {
             return this.name;
         }
         public String getId() {
             return id;
         }
-        public String getDescription() {
+        public @Nullable String getDescription() {
             return description;
         }
         public String getVersion() {
             return version;
         }
-        public String getIcon() {
+        public @Nullable String getIcon() {
             return icon;
         }
-        public Map<String, String> getDependencies() {
+        public @Nullable String getTitle() {
+            return title;
+        }
+        public @Nullable Map<String, String> getDependencies() {
             return dependencies;
         }
     }
