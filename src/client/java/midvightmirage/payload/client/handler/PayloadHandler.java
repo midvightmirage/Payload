@@ -2,6 +2,7 @@ package midvightmirage.payload.client.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
 import midvightmirage.payload.Payload;
 import midvightmirage.payload.client.handler.pack.block.BlockReader;
@@ -10,9 +11,13 @@ import midvightmirage.payload.client.handler.pack.item.ItemReader;
 import midvightmirage.payload.client.handler.pack.item.tab.TabReader;
 import midvightmirage.payload.client.util.ConversionUtil;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.resources.Identifier;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -85,7 +90,39 @@ public class PayloadHandler {
         BufferedReader reader = Files.newBufferedReader(path.resolve("pack.json"));
 
         this.packInfo = this.gson.fromJson(reader, PackInfo.class);
+
+        String packId = this.packInfo.getPack().getId();
+
+        if (ids.contains(packId)) {
+            throw new RuntimeException("Another pack already has the id of \"" + packId + "\"!");
+        }
+
+        ids.add(packId);
+
+        String iconPath = this.packInfo.getPack().getIcon();
+
+        if (iconPath != null) {
+            afterInit.add(() -> {
+                Identifier id = Identifier.fromNamespaceAndPath("payload_packs", packId);
+
+                Path fullIconPath = path.resolve(iconPath);
+
+                try (InputStream stream = Files.newInputStream(fullIconPath)) {
+                    NativeImage image = NativeImage.read(stream);
+
+                    Minecraft.getInstance().getTextureManager().register(
+                            id,
+                            new DynamicTexture(() -> iconPath, image)
+                    );
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
+
+    private final List<String> ids = new ArrayList<>();
+    public static final List<Runnable> afterInit = new ArrayList<>();
 
     public static Path getPayloadPacksFolder() {
         return FabricLoader.getInstance().getGameDir().resolve("payload/packs");
@@ -102,6 +139,8 @@ public class PayloadHandler {
     }
 
     public void bootstrap() {
+        ids.clear();
+        afterInit.clear();
         packs = getFolders();
 
         for (Path path : packs) {

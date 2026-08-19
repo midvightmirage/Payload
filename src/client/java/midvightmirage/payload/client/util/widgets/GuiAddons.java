@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
@@ -19,15 +20,22 @@ public class GuiAddons {
                 .width(i)
                 .sprite(Payload.id("icon/addons"), 15, 15)
                 .build();
-        button.active = false;
-        button.setTooltip(Tooltip.create(
-                Component.translatable("payload.addons")
-                        .append("\n")
-                        .append(
-                                Component.literal("Work in Progress!").
-                                        withColor(TextColor.GRAY)
-                        )
-        ));
+        button.setTooltip(getAddonsTooltip(button.active));
         return button;
+    }
+
+    private static Tooltip getAddonsTooltip(boolean enabled) {
+        MutableComponent mainComponent = Component.translatable("payload.addons");
+
+        if (!enabled) {
+            mainComponent
+                    .append("\n")
+                    .append(
+                            Component.literal("Work in Progress!").
+                                    withColor(TextColor.GRAY)
+                    );
+        }
+
+        return Tooltip.create(mainComponent);
     }
 }

@@ -8,22 +8,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class UIStyles {
-    private static final Map<Identifier, UIStyle> UI_STYLES = new HashMap<>();
     private static Supplier<Pair<Identifier, UIStyle>> DEFAULT;
 
-    public static Map<Identifier, UIStyle> getUiStyles() {
-        return UI_STYLES;
-    }
-
     public static final MinecraftUIStyle MINECRAFT = register("minecraft", new MinecraftUIStyle(), true);
-    public static final EditorUIStyle EDITOR = register("editor", new EditorUIStyle());
+    public static final EditorUIStyle EDITOR = register("editor", EditorUIStyle.INSTANCE);
 
     private static <T extends UIStyle> T register(String name, T style, boolean isDefault) {
         Identifier id = Identifier.fromNamespaceAndPath("payload", name);
-        UI_STYLES.put(
-                id,
-                style
-        );
         if (isDefault) {
             DEFAULT = () -> Pair.of(id, style);
         }

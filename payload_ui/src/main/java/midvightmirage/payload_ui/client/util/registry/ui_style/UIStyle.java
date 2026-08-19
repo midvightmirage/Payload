@@ -264,13 +264,17 @@ public abstract class UIStyle implements Renderable {
         return Style.EMPTY.withItalic(italic).withBold(bold).withUnderlined(underlined).withStrikethrough(strikethrough);
     }
 
-    protected final MutableComponent getWithDefaultStyle(MutableComponent component, boolean monospace) {
-        return component.setStyle(getDefaultStyle(
+    public final MutableComponent getWithDefaultStyle(MutableComponent component, boolean monospace) {
+        MutableComponent returnComponent = component.setStyle(getDefaultStyle(
                 component.getStyle().isItalic(),
                 component.getStyle().isBold(),
                 component.getStyle().isUnderlined(),
                 component.getStyle().isStrikethrough(),
                 monospace
         ));
+        if (component.getStyle().getColor() != null) {
+            return returnComponent.withColor(component.getStyle().getColor());
+        }
+        return returnComponent;
     }
 }

@@ -1,5 +1,6 @@
 package midvightmirage.payload.client.mixin;
 
+import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.PayloadIconRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.LoadingOverlay;
@@ -20,5 +21,8 @@ public class MixinLoadingOverlay {
     )
     private void payload$atLoadingOverlayInit(Minecraft minecraft, ReloadInstance reload, Consumer<Optional<Throwable>> onFinish, boolean fadeIn, CallbackInfo ci) {
         PayloadIconRegistry.bootstrap();
+        for (Runnable runnable : PayloadHandler.afterInit) {
+            runnable.run();
+        }
     }
 }

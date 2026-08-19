@@ -42,20 +42,6 @@ public class AddonComponent extends AbstractWidget {
 
     public void setIconPath(String iconPath) {
         this.iconPath = iconPath;
-        Identifier id = Identifier.fromNamespaceAndPath("assets_manager", iconPath);
-
-        Path fullIconPath = PayloadHandler.getPackPathFromPack(this.pack).resolve(iconPath);
-
-        try (InputStream stream = Files.newInputStream(fullIconPath)) {
-            NativeImage image = NativeImage.read(stream);
-
-            Minecraft.getInstance().getTextureManager().register(
-                    id,
-                    new DynamicTexture(() -> this.iconPath, image)
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void setPack(PackInfo.Pack pack) {
@@ -84,7 +70,7 @@ public class AddonComponent extends AbstractWidget {
         }
         Identifier icon = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
         if (iconPath != null && !iconPath.isEmpty()) {
-            icon = Identifier.fromNamespaceAndPath("assets_manager", iconPath);
+            icon = Identifier.fromNamespaceAndPath("payload_packs", this.pack.getId());
         }
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,

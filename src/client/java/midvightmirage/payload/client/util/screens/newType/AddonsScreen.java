@@ -3,6 +3,7 @@ package midvightmirage.payload.client.util.screens.newType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import com.mojang.datafixers.util.Pair;
 import midvightmirage.payload.Payload;
+import midvightmirage.payload.client.handler.PackInfo;
 import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.PackVisibilityType;
 import midvightmirage.payload.client.util.PayloadIconRegistry;
@@ -12,20 +13,27 @@ import midvightmirage.payload_ui.client.util.registry.ui_style.EditorUIStyle;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyle;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyles;
 import midvightmirage.payload_ui.client.util.screen.PayloadScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -33,10 +41,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     public AddonsScreen(Screen parent) {
@@ -47,7 +53,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private Vector2i xPos;
     private Vector2i xSize;
 
-    private PackVisibilityType packVisibilityType = PackVisibilityType.RENDER;
+    private PackVisibilityType packVisibilityType = PackVisibilityType.ICONS_WITH_INFO;
     private int buttonFrame = 0;
 
     @Override
@@ -73,7 +79,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private final List<Pair<Vector2i, Vector2i>> packAreas = new ArrayList<>();
     private final Map<String, List<Vector2i>> buttonPositions = new LinkedHashMap<>();
 
-    private void createTextBox(UIStyle style) {
+    private void createTextBox(EditorUIStyle style) {
         int textBoxWidth  = (int)(this.width/1.75f);
         int textBoxHeight = 24;
         int textBoxX      = (this.width-textBoxWidth)/2;
@@ -112,7 +118,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         );
     }
 
-    private void createPacksGrid(UIStyle style, PackVisibilityType type) {
+    private void createPacksGrid(EditorUIStyle style, PackVisibilityType type) {
         int xMax = switch (type) {
             case ICONS_WITH_INFO -> 3;
             case ICONS -> 10;
@@ -123,7 +129,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         int packsCount = PayloadHandler.getFolders().size();
         Payload.LOGGER.info("Creating packs grid with {} packs.", packsCount);
 
-        boolean debugMode = true;
+        boolean debugMode = false;
 
         for (int y = 0; y < yMax; y++) {
             if (!debugMode) {
@@ -142,11 +148,30 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
             }
         }
     }
-    private void createPack(UIStyle style, PackVisibilityType type, int x, int y, int id) {
+
+    private PackInfo.Pack getPackFromId(int id) {
+        List<Path> paths = PayloadHandler.getFolders();
+        PackInfo info = PayloadHandler.INSTANCE.getPackInfos().get(paths.get(id));
+        return info.getPack();
+    }
+
+    private void createPack(EditorUIStyle style, PackVisibilityType type, int x, int y, int id) {
         int sx = 2;
         int sy = 2;
 
-        Identifier packImage = Identifier.fromNamespaceAndPath("minecraft", "missingno");
+        Identifier packImage = Identifier.withDefaultNamespace("textures/misc/unknown_pack.png");
+
+        PackInfo.Pack pack = getPackFromId(id);
+
+        if (packVisibilityType != PackVisibilityType.RENDER) {
+            TextureManager textures = minecraft.getTextureManager();
+
+            Identifier iconId = Identifier.fromNamespaceAndPath("payload_packs", pack.getId());
+
+            if (textures.byPath.containsKey(iconId))
+                packImage = iconId;
+        }
+
         Vector2i editPos = new Vector2i();
         Vector2i deletePos = new Vector2i();
 
@@ -174,7 +199,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 style.createLabel(
                         this,
                         null,
-                        () -> Component.literal("Pack no. " + (id + 1)).withStyle(Style.EMPTY.withBold(true)),
+                        () -> Component.literal(Objects.requireNonNullElse(pack.getName(), "Unknown")).withStyle(Style.EMPTY.withBold(true)),
                         new Vector2i(rx + 34, ry + 3),
                         new Vector2i(),
                         Color.WHITE,
@@ -183,7 +208,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 style.createLabel(
                         this,
                         null,
-                        () -> Component.literal("Placeholder description"),
+                        () -> Component.literal(Objects.requireNonNullElse(pack.getDescription(), "")),
                         new Vector2i(rx + 34, ry + 13),
                         new Vector2i(),
                         Color.LIGHT_GRAY,
@@ -253,7 +278,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private int buttonsX, buttonsY;
     private boolean showChangeStyle = false;
 
-    private void createBottomButtons(UIStyle style) {
+    private void createBottomButtons(EditorUIStyle style) {
         List<Triple<Identifier, MutableComponent, Runnable>> buttons = new ArrayList<>() {{
             add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("folder"),
@@ -268,7 +293,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
             add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("refresh-cw"),
                     Component.translatable("payload.addons.reload"),
-                    () -> {}
+                    () -> refresh()
             ));
             add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("square-arrow-right-exit"),
@@ -309,7 +334,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         }
     }
 
-    private void createButtonWithIcon(UIStyle style, MutableComponent label, Identifier icon, Vector2i iconSize, Runnable runnable, Vector2i pos, Vector2i size) {
+    private void createButtonWithIcon(EditorUIStyle style, MutableComponent label, Identifier icon, Vector2i iconSize, Runnable runnable, Vector2i pos, Vector2i size) {
         Font font = style.getDefaultFont();
 
         int width = font.width(label);
@@ -341,6 +366,10 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
     private boolean onChanger = false;
     private int changerFrame;
+    private Vector2i changerPos;
+    private Vector2i changerSize;
+
+    private final List<Pair<Vector2i, Vector2i>> changerButtons = new ArrayList<>();
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
@@ -355,9 +384,58 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         extractEditAndDelete(graphics, mousePos);
 
         extractPackVisibilityType(graphics, mousePos);
+
+        if (currentlyHovered >= 0) {
+            Pair<Vector2i, Vector2i> area = packAreas.get(currentlyHovered);
+
+            if (PayloadUtil.isMouseIn(mousePos, area.getFirst(), area.getSecond())) {
+                graphics.requestCursor(CursorTypes.POINTING_HAND);
+
+                if (!(mouseInEdit || mouseInDelete)) {
+                    if (packVisibilityType != PackVisibilityType.ICONS_WITH_INFO) {
+                        PackInfo.Pack pack = getPackFromId(currentlyHovered);
+
+                        graphics.tooltip(
+                                EditorUIStyle.getFont(),
+                                List.of(
+                                        toTooltip(
+                                                EditorUIStyle.getWithStyle(
+                                                        Component.literal(
+                                                                Objects.requireNonNullElse(pack.getName(), "Unknown")
+                                                        ).setStyle(Style.EMPTY.withBold(true)),
+                                                        false
+                                                )
+                                        ),
+                                        toTooltip(
+                                                EditorUIStyle.getWithStyle(
+                                                        Component.literal(
+                                                                Objects.requireNonNullElse(pack.getDescription(), "")
+                                                        ).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)),
+                                                        false
+                                                )
+                                        )
+                                ),
+                                mouseX,
+                                mouseY,
+                                DefaultTooltipPositioner.INSTANCE,
+                                null
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean mouseInEdit;
+    private boolean mouseInDelete;
+
+    private ClientTooltipComponent toTooltip(MutableComponent component) {
+        return ClientTooltipComponent.create(component.getVisualOrderText());
     }
 
     private void extractPackVisibilityType(GuiGraphicsExtractor graphics, Vector2i mousePos) {
+        changerButtons.clear();
+
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 packVisibilityType.getId(),
@@ -383,16 +461,94 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
         float floatedChangerFrame = this.changerFrame / (float)animLength;
 
-        int height = direction > 0 ? Tweens.sineOut(floatedChangerFrame, 0, 150)
-                : Tweens.sineIn(floatedChangerFrame, 0, 150);
+        int maxHeight = 108;
 
-        Vector2i pos = new Vector2i(this.buttonsX, this.buttonsY - height);
+        int height = direction > 0 ? Tweens.sineOut(floatedChangerFrame, 0, maxHeight)
+                : Tweens.sineIn(floatedChangerFrame, 0, maxHeight);
+
+        this.changerPos  = new Vector2i(this.buttonsX, this.buttonsY - height);
+        this.changerSize = new Vector2i(100,         height                  );
+
+        graphics.enableScissor(
+                changerPos.x, changerPos.y,
+                changerPos.x+changerSize.x, changerPos.y+changerSize.y
+        );
 
         graphics.fill(
-                pos.x, pos.y,
-                pos.x+100, pos.y+height,
+                changerPos.x, changerPos.y,
+                changerPos.x+changerSize.x, changerPos.y+changerSize.y,
                 0xFF666666
         );
+
+        List<PackVisibilityType> values = Arrays.asList(PackVisibilityType.values());
+
+        for (int i = 0; i < values.size(); i++) {
+            PackVisibilityType value = values.get(i);
+
+            int sizeY = 32;
+
+            Vector2i pos = new Vector2i(
+                    changerPos.x + 2,
+                    changerPos.y + 2 + ((sizeY + 2) * i)
+            );
+
+            Vector2i size = new Vector2i(100 - 4, sizeY);
+
+            changerButtons.add(Pair.of(pos, size));
+
+            boolean hovering = PayloadUtil.isMouseIn(mousePos, pos, size);
+
+            int color = hovering ? 0xFF777777 : 0xFF6A6A6A;
+
+            graphics.fill(
+                    pos.x, pos.y,
+                    pos.x + size.x,
+                    pos.y + size.y,
+                    color
+            );
+
+            Font font = EditorUIStyle.getFont();
+
+            graphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    value.getId(),
+                    pos.x + 2,
+                    pos.y + 8,
+                    0, 0,
+                    16, 16,
+                    16, 16
+            );
+
+            graphics.text(
+                    font,
+                    EditorUIStyle.getWithStyle(
+                            Component.translatable(value.getSerializedName()),
+                            false
+                    ),
+                    pos.x+20,
+                    pos.y + ((size.y-font.lineHeight)/2),
+                    0xFFFFFFFF,
+                    false
+            );
+
+            if (packVisibilityType == value) {
+                graphics.blit(
+                        RenderPipelines.GUI_TEXTURED,
+                        PayloadIconRegistry.REGISTERED.get("check"),
+                        (pos.x + size.x) - 18,
+                        pos.y + 8,
+                        0, 0,
+                        16, 16,
+                        16, 16
+                );
+            } else {
+                if (PayloadUtil.isMouseIn(mousePos, pos, size)) {
+                    graphics.requestCursor(CursorTypes.POINTING_HAND);
+                }
+            }
+        }
+
+        graphics.disableScissor();
     }
 
     private void extractEditAndDelete(GuiGraphicsExtractor graphics, Vector2i mousePos) {
@@ -410,8 +566,8 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
                 Vector2i iconSizes = new Vector2i(12, 12);
 
-                boolean mouseInEdit = PayloadUtil.isMouseIn(mousePos, editPos, iconSizes);
-                boolean mouseInDelete = PayloadUtil.isMouseIn(mousePos, deletePos, iconSizes);
+                mouseInEdit = PayloadUtil.isMouseIn(mousePos, editPos, iconSizes);
+                mouseInDelete = PayloadUtil.isMouseIn(mousePos, deletePos, iconSizes);
 
                 float time = buttonFrame/10f;
 
@@ -531,12 +687,43 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         requestWithFill(graphics, pos, size, 1);
     }
 
+    private void refresh() {
+        init();
+    }
+
 
     private boolean xPressed = false;
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         Vector2i mousePos = new Vector2i((int)event.x(), (int)event.y());
+        SoundManager sound = Minecraft.getInstance().getSoundManager();
+
+        if (showChangeStyle) {
+            if (PayloadUtil.isMouseIn(mousePos, this.changerPos, this.changerSize)) {
+                for (int i = 0; i < changerButtons.size(); i++) {
+                    PackVisibilityType type = PackVisibilityType.values()[i];
+                    Pair<Vector2i, Vector2i> pos = changerButtons.get(i);
+
+                    if (PayloadUtil.isMouseIn(mousePos, pos.getFirst(), pos.getSecond())) {
+                        if (packVisibilityType != type) {
+                            packVisibilityType = type;
+
+                            refresh();
+                            playDownSound(sound);
+
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                showChangeStyle = false;
+                return true;
+            }
+
+            return super.mouseClicked(event, doubleClick);
+        }
+
         if (PayloadUtil.isMouseIn(mousePos, this.xPos, this.xSize)) {
             this.xPressed = true;
             return true;
@@ -547,8 +734,6 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
             Vector2i deletePos = buttonPositions.get("delete").get(currentlyHovered);
 
             Vector2i iconsSize = new Vector2i(12, 12);
-
-            SoundManager sound = Minecraft.getInstance().getSoundManager();
 
             Pair<Vector2i, Vector2i> packArea = packAreas.get(currentlyHovered);
 

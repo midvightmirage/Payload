@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.function.*;
 
 public class EditorUIStyle extends UIStyle {
+    public static final EditorUIStyle INSTANCE = new EditorUIStyle();
+
     @Override
     public void createTextBox(Screen screen, @Nullable List<Map<String, Object>> parent, Supplier<MutableComponent> hint, Vector2i pos, Vector2i size, Consumer<String> onSearch, Supplier<Boolean> shouldClear, int paddingX) {
         var widget = new AbstractWidget(pos.x, pos.y, size.x, size.y, hint.get()) {
@@ -373,8 +375,24 @@ public class EditorUIStyle extends UIStyle {
         return Style.EMPTY.withFont(collection.getDescription(bold, italic));
     }
 
+    public static Style getStyle(boolean italic, boolean bold, boolean underlined, boolean strikethrough, boolean monospace) {
+        return INSTANCE.getDefaultStyle(italic, bold, underlined, strikethrough, monospace);
+    }
+
+    public static Font getFont() {
+        return INSTANCE.getDefaultFont();
+    }
+
     @Override
     public RenderPipeline getDefaultPipeline(boolean textured) {
         return super.getDefaultPipeline(textured);
+    }
+
+    public static RenderPipeline getPipeline(boolean textured) {
+        return INSTANCE.getDefaultPipeline(textured);
+    }
+
+    public static MutableComponent getWithStyle(MutableComponent component, boolean monospace) {
+        return INSTANCE.getWithDefaultStyle(component, monospace);
     }
 }
