@@ -7,10 +7,10 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.resources.Identifier;
 
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.List;
 
 public class PayloadIconRegistry {
     public static final Map<String, Identifier> REGISTERED = new HashMap<>();
@@ -20,16 +20,12 @@ public class PayloadIconRegistry {
 
     public static void bootstrap() {
         if (!registered) {
-            register("layout-grid");
-            register("layout-list");
-            register("menu");
-            register("refresh-cw");
-            register("search");
-            register("server-plus");
-            register("square-arrow-right-exit");
-            register("square-pen");
-            register("trash-2");
-            register("x");
+            List<String> icons = new ArrayList<>(getAllIcons());
+            icons.removeIf(name -> name.equalsIgnoreCase("license"));
+
+            for (String icon : icons) {
+                register(icon);
+            }
         }
         registered = true;
     }
@@ -50,6 +46,28 @@ public class PayloadIconRegistry {
 
     private static void register(String name) {
         register(name, Color.WHITE);
+    }
+
+    private static Path getIconsPath() {
+        try {
+            ModContainer container = FabricLoader.getInstance().getModContainer(Payload.MOD_ID).orElseThrow();
+            Path path = container.findPath("fabric.mod.json").orElseThrow().getParent();
+            return path.resolve("payload/icons");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static List<String> getAllIcons() {
+        List<String> files = new ArrayList<>();
+
+        Path iconsPath = getIconsPath();
+        for (File file : Objects.requireNonNull(iconsPath.toFile().listFiles())) {
+            String filename = file.toPath().getFileName().toString();
+            files.add(filename.substring(0, filename.lastIndexOf('.')));
+        }
+
+        return files;
     }
 
     private static Path getIconPath(String name) {

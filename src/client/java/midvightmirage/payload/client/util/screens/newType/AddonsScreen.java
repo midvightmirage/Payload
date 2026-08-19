@@ -7,6 +7,7 @@ import midvightmirage.payload.client.handler.PayloadHandler;
 import midvightmirage.payload.client.util.PackVisibilityType;
 import midvightmirage.payload.client.util.PayloadIconRegistry;
 import midvightmirage.payload_ui.client.util.PayloadUtil;
+import midvightmirage.payload_ui.client.util.Tweens;
 import midvightmirage.payload_ui.client.util.registry.ui_style.EditorUIStyle;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyle;
 import midvightmirage.payload_ui.client.util.registry.ui_style.UIStyles;
@@ -24,13 +25,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
+import net.minecraft.util.*;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +47,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private Vector2i xPos;
     private Vector2i xSize;
 
-    private PackVisibilityType packVisibilityType = PackVisibilityType.ICONS_WITH_INFO;
+    private PackVisibilityType packVisibilityType = PackVisibilityType.RENDER;
     private int buttonFrame = 0;
 
     @Override
@@ -141,18 +143,22 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         }
     }
     private void createPack(UIStyle style, PackVisibilityType type, int x, int y, int id) {
+        int sx = 2;
+        int sy = 2;
+
+        Identifier packImage = Identifier.fromNamespaceAndPath("minecraft", "missingno");
+        Vector2i editPos = new Vector2i();
+        Vector2i deletePos = new Vector2i();
+
         switch (type) {
             case ICONS_WITH_INFO -> {
-                int sx = 2;
-                int sy = 2;
-
-                int rx = ((this.width -(3*(125+sx)))/2) + x * (125+sx);
-                int ry = ((this.height-(5*(32 +sy)))/2) + y * (32+sy);
+                int rx = ((this.width  - (3 * (125 + sx))) / 2) + x * (125 + sx);
+                int ry = ((this.height - (5 * (32  + sy))) / 2) + y * (32  + sy);
 
                 style.createImage(
                         this,
                         null,
-                        Identifier.fromNamespaceAndPath("minecraft", "missingno"),
+                        packImage,
                         new Vector2i(rx, ry),
                         new Vector2i(32, 32),
                         Color.WHITE
@@ -188,39 +194,85 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
                 packAreas.add(Pair.of(new Vector2i(rx + 32, ry), new Vector2i(125 - 32, 32)));
 
-                Vector2i editPos = new Vector2i(rx + 97, ry + ((32 - 12)/2) + 4);
-                Vector2i deletePos = new Vector2i(editPos).add(14, 0);
+                editPos = new Vector2i(rx + 97, ry + ((32 - 12)/2) + 4);
+                deletePos = new Vector2i(editPos).add(14, 0);
+            }
+            case ICONS -> {
+                int rx = ((this.width  -(10 * (32 + sx))) / 2) + x * (32 + sx);
+                int ry = ((this.height -(5  * (32 + sy))) / 2) + y * (32 + sy);
 
-                if (!buttonPositions.containsKey("edit")) {
-                    buttonPositions.put("edit", new ArrayList<>());
-                }
-                if (!buttonPositions.containsKey("delete")) {
-                    buttonPositions.put("delete", new ArrayList<>());
-                }
+                Vector2i iconSize = new Vector2i(32, 32);
 
-                buttonPositions.get("edit"  ).add(editPos  );
-                buttonPositions.get("delete").add(deletePos);
+                style.createImage(
+                        this,
+                        null,
+                        packImage,
+                        new Vector2i(rx, ry),
+                        iconSize,
+                        Color.WHITE
+                );
+
+                packAreas.add(Pair.of(new Vector2i(rx, ry), iconSize));
+
+                editPos = new Vector2i(rx + 4, ry + ((32 - 12) / 2) + 8);
+                deletePos = new Vector2i(editPos).add(14, 0);
+            }
+            case RENDER -> {
+                int rx = ((this.width  -(7 * (48 + sx))) / 2) + x * (48 + sx);
+                int ry = ((this.height -(5 * (32 + sy))) / 2) + y * (32 + sy);
+
+                Vector2i iconSize = new Vector2i(48, 32);
+
+                style.createImage(
+                        this,
+                        null,
+                        packImage,
+                        new Vector2i(rx, ry),
+                        iconSize,
+                        Color.WHITE
+                );
+
+                packAreas.add(Pair.of(new Vector2i(rx, ry), iconSize));
+
+                editPos = new Vector2i(rx + 20, ry + ((32 - 12) / 2) + 8);
+                deletePos = new Vector2i(editPos).add(14, 0);
             }
         }
+
+        if (!buttonPositions.containsKey("edit")) {
+            buttonPositions.put("edit", new ArrayList<>());
+        }
+        if (!buttonPositions.containsKey("delete")) {
+            buttonPositions.put("delete", new ArrayList<>());
+        }
+
+        buttonPositions.get("edit"  ).add(editPos  );
+        buttonPositions.get("delete").add(deletePos);
     }
 
     private int buttonsX, buttonsY;
+    private boolean showChangeStyle = false;
 
     private void createBottomButtons(UIStyle style) {
         List<Triple<Identifier, MutableComponent, Runnable>> buttons = new ArrayList<>() {{
             add(Triple.of(
+                    PayloadIconRegistry.REGISTERED.get("folder"),
+                    Component.translatable("payload.addons.packs"),
+                    () -> Util.getPlatform().openUri(PayloadHandler.getPayloadPacksFolder().toUri())
+            ));
+            add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("server-plus"),
-                    Component.literal("Create"),
+                    Component.translatable("payload.addons.create"),
                     () -> {}
             ));
             add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("refresh-cw"),
-                    Component.literal("Reload"),
+                    Component.translatable("payload.addons.reload"),
                     () -> {}
             ));
             add(Triple.of(
                     PayloadIconRegistry.REGISTERED.get("square-arrow-right-exit"),
-                    Component.literal("Exit"),
+                    Component.translatable("payload.addons.exit"),
                     AddonsScreen.this::onClose
             ));
         }};
@@ -228,11 +280,12 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
         this.buttonsX = ((this.width  - ((buttons.size()*60) + ((buttons.size() - 1)*2))))/2-13;
         this.buttonsY = (this.height - 30);
 
+        // style button
         style.createButton(
                 this,
                 null,
                 Component::empty,
-                () -> {},
+                () -> showChangeStyle = !showChangeStyle,
                 new Vector2i(buttonsX, buttonsY),
                 new Vector2i(25, 25),
                 0
@@ -261,20 +314,22 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
         int width = font.width(label);
 
+        int paddingX = 6;
+
         style.createButton(
                 this,
                 null,
                 () -> label,
                 runnable,
                 pos, size,
-                (iconSize.x+4)-((size.x-width)/2)
+                (iconSize.x+2 + paddingX)-((size.x-width)/2)
         );
 
         style.createImage(
                 this,
                 null,
                 icon,
-                new Vector2i(pos.x + 2, pos.y + (size.y-iconSize.y)/2),
+                new Vector2i(pos.x + paddingX, pos.y + (size.y-iconSize.y)/2),
                 iconSize,
                 Color.WHITE
         );
@@ -283,6 +338,9 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private int currentlyHovered;
     private int editHoldFrame;
     private int deleteHoldFrame;
+
+    private boolean onChanger = false;
+    private int changerFrame;
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
@@ -296,6 +354,10 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
         extractEditAndDelete(graphics, mousePos);
 
+        extractPackVisibilityType(graphics, mousePos);
+    }
+
+    private void extractPackVisibilityType(GuiGraphicsExtractor graphics, Vector2i mousePos) {
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 packVisibilityType.getId(),
@@ -305,11 +367,38 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 19, 19,
                 19, 19
         );
+
+        onChanger = showChangeStyle;
+
+        int direction = showChangeStyle ? 1 : -1;
+
+        changerFrame += direction;
+
+        int animLength = 25;
+
+        changerFrame = Math.min(changerFrame, animLength);
+        changerFrame = Math.max(changerFrame, 0);
+
+        if (changerFrame == 0) return;
+
+        float floatedChangerFrame = this.changerFrame / (float)animLength;
+
+        int height = direction > 0 ? Tweens.sineOut(floatedChangerFrame, 0, 150)
+                : Tweens.sineIn(floatedChangerFrame, 0, 150);
+
+        Vector2i pos = new Vector2i(this.buttonsX, this.buttonsY - height);
+
+        graphics.fill(
+                pos.x, pos.y,
+                pos.x+100, pos.y+height,
+                0xFF666666
+        );
     }
 
     private void extractEditAndDelete(GuiGraphicsExtractor graphics, Vector2i mousePos) {
         for (int i = 0; i < packAreas.size(); i++) {
             Pair<Vector2i, Vector2i> pair = packAreas.get(i);
+            if (onChanger) return;
             if (PayloadUtil.isMouseIn(mousePos, pair.getFirst(), pair.getSecond())) {
                 if (i != currentlyHovered) {
                     buttonFrame = 0;
@@ -326,7 +415,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
                 float time = buttonFrame/10f;
 
-                int lerpedY = Mth.lerpInt(time, 5, 0);
+                int lerpedY = Tweens.sineOut(time, 5, 0);
 
                 editPos  .add(0, lerpedY);
                 deletePos.add(0, lerpedY);
@@ -334,7 +423,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 editPos  .sub(0, (int)(editHoldFrame   / 2.5f));
                 deletePos.sub(0, (int)(deleteHoldFrame / 2.5f));
 
-                int alpha = Mth.lerpInt(time, 0, 255);
+                int alpha = (int)((5 - lerpedY) * (255f/5f));
 
                 graphics.blit(
                         RenderPipelines.GUI_TEXTURED,
@@ -358,7 +447,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 );
 
                 if (mouseInEdit) {
-                    requestWithFill(graphics, editPos.add(0, 12), new Vector2i(12, 2), editHoldFrame/5f);
+                    requestWithFill(graphics, editPos, new Vector2i(12, 12), editHoldFrame/5f);
                     editHoldFrame++;
                 } else {
                     editHoldFrame--;
@@ -368,7 +457,7 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
                 editHoldFrame = Math.max(editHoldFrame, 0);
 
                 if (mouseInDelete) {
-                    requestWithFill(graphics, deletePos.add(0, 12), new Vector2i(12, 2), deleteHoldFrame/5f);
+                    requestWithFill(graphics, deletePos, new Vector2i(12, 12), deleteHoldFrame/5f);
                     deleteHoldFrame++;
                 } else {
                     deleteHoldFrame--;
@@ -393,13 +482,49 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
     private void requestWithFill(GuiGraphicsExtractor graphics, Vector2i pos, Vector2i size, float lerp) {
         graphics.requestCursor(CursorTypes.POINTING_HAND);
 
-        graphics.fill(
-                pos.x,
-                pos.y,
-                pos.x + size.x,
-                pos.y + size.y,
-                PayloadUtil.toARGB(new Color(127, 127, 127, Mth.lerpInt(lerp, 0, 127)))
+        int thickness = 2;
+        Vector2i newPos = new Vector2i(pos).add(0, size.y);
+
+        int color1 = PayloadUtil.toARGB(new Color(100, 100, 100, Tweens.sineOut(lerp, 0, 63)));
+        int color2 = PayloadUtil.toARGB(new Color(100, 100, 100, Tweens.sineOut(lerp, 0, 127)));
+
+        int half = size.x / 2;
+
+        graphics.enableScissor(newPos.x, newPos.y, newPos.x + half, newPos.y + thickness);
+
+        graphics.pose().pushMatrix();
+
+        graphics.pose().translate(newPos.x, newPos.y);
+        graphics.pose().rotate((float) Math.toRadians(-90));
+
+        graphics.fillGradient(
+                -thickness, 0,
+                0, half,
+                color1,
+                color2
         );
+
+        graphics.pose().popMatrix();
+
+        graphics.disableScissor();
+
+        graphics.enableScissor(newPos.x + half, newPos.y, newPos.x + size.x, newPos.y + thickness);
+
+        graphics.pose().pushMatrix();
+
+        graphics.pose().translate(newPos.x + half, newPos.y);
+        graphics.pose().rotate((float) Math.toRadians(-90));
+
+        graphics.fillGradient(
+                -thickness, 0,
+                0, half,
+                color2,
+                color1
+        );
+
+        graphics.pose().popMatrix();
+
+        graphics.disableScissor();
     }
 
     private void requestWithFill(GuiGraphicsExtractor graphics, Vector2i pos, Vector2i size) {
@@ -425,15 +550,23 @@ public class AddonsScreen extends PayloadScreen<EditorUIStyle> {
 
             SoundManager sound = Minecraft.getInstance().getSoundManager();
 
+            Pair<Vector2i, Vector2i> packArea = packAreas.get(currentlyHovered);
+
             if (PayloadUtil.isMouseIn(mousePos, editPos, iconsSize)) {
                 this.playDownSound(sound);
                 Payload.LOGGER.info("Pressed on edit of pack no. {}.", currentlyHovered + 1);
                 return true;
-            }
-            if (PayloadUtil.isMouseIn(mousePos, deletePos, iconsSize)) {
+            } else if (PayloadUtil.isMouseIn(mousePos, deletePos, iconsSize)) {
                 this.playDownSound(sound);
                 Payload.LOGGER.info("Pressed on delete of pack no. {}.", currentlyHovered + 1);
                 return true;
+            } else if (PayloadUtil.isMouseIn(mousePos, packArea.getFirst(), packArea.getSecond())) {
+                this.playDownSound(sound);
+                List<Path> folders = PayloadHandler.getFolders();
+                if (currentlyHovered < folders.size()) {
+                    Util.getPlatform().openUri(folders.get(currentlyHovered).toUri());
+                    return true;
+                }
             }
         }
 

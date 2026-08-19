@@ -5,13 +5,21 @@ plugins {
 
 group = "midvightmirage.payload_ui"
 
+tasks.register("modrinthStripped${project.name.capitalize()}", Jar) {
+    dependsOn project.tasks.named("jar")
+    archiveBaseName = project.name
+    destinationDirectory = layout.buildDirectory.dir("modrinth-stripped-jars")
+
+    from(zipTree(project.tasks.named("jar").get().archiveFile)) {
+        exclude "java/**"
+    }
+}
+
 loom {
     accessWidenerPath = file("src/main/resources/payload_ui.accesswidener")
-    if (gradle.startParameter.taskNames.any { !(it.containsIgnoreCase("jar")) }) {
-        mods {
-            "payload" {
-                sourceSet sourceSets.main
-            }
+    mods {
+        "payload" {
+            sourceSet sourceSets.main
         }
     }
 }

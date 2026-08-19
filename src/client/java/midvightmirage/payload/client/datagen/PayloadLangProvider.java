@@ -22,6 +22,12 @@ public class PayloadLangProvider extends FabricLanguageProvider {
         translationBuilder.add("payload.addons.editing", "Editing pack \"%d\"");
         translationBuilder.add("payload.addons.creation", "Pack creation");
 
+        // new
+        translationBuilder.add("payload.addons.packs", "Packs");
+        translationBuilder.add("payload.addons.create", "Create");
+        translationBuilder.add("payload.addons.reload", "Refresh");
+        translationBuilder.add("payload.addons.exit", "Exit");
+
         translationBuilder.add("payload.addons.config.pack_name", "Pack Name");
         translationBuilder.add("payload.addons.config.pack_desc", "Pack Description");
         translationBuilder.add("payload.addons.config.pack_id", "Pack ID");

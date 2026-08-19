@@ -4,8 +4,12 @@ plugins {
     id 'com.modrinth.minotaur' version '2.8.7'
 }
 
-def genVersion() {
+def genModrinthVersion() {
     return "mc${project.minecraft_version}_${project.mod_version}-${project.mod_version_type}.${project.mod_hotfix}"
+}
+
+def genVersion() {
+    return "${project.minecraft_version}_${project.mod_version}-${project.mod_version_type}.${project.mod_hotfix}"
 }
 
 group = project.maven_group
@@ -15,18 +19,32 @@ import com.modrinth.minotaur.dependencies.ModDependency
 
 def modrinthToken = file("token.txt").readLines().first
 
+subprojects.each { sub ->
+    tasks.register("modrinthStripped${sub.name.capitalize()}", Jar) {
+        dependsOn sub.tasks.named("jar")
+        archiveBaseName = sub.name
+        destinationDirectory = layout.buildDirectory.dir("modrinth-stripped-jars")
+
+        from(zipTree(sub.tasks.named("jar").get().archiveFile)) {
+            exclude "java/**"
+        }
+    }
+}
+
 tasks.register("modrinthJar", Jar) {
     archiveClassifier = ""
 
     dependsOn jar
-    dependsOn subprojects.collect { it.tasks.named("jar") }
+    dependsOn subprojects.collect { it.tasks.named("modrinthStripped${it.name.capitalize()}") }
 
-    from sourceSets.main.output
+    from(sourceSets.main.output) {
+        exclude ".cache/**"
+    }
 
     into("META-INF/jars") {
         from {
-            subprojects.collect { project ->
-                project.tasks.named("jar").get().archiveFile
+            subprojects.collect { sub ->
+                tasks.named("modrinthStripped${sub.name.capitalize()}").get().archiveFile
             }
         }
     }
@@ -37,15 +55,17 @@ tasks.register("modrinthJar", Jar) {
 modrinth {
     token = modrinthToken
     projectId = "f7iCBGjv"
-    versionNumber = "${version}"
-    versionName = genVersion()
+    versionName = "${version}"
+    versionNumber = genModrinthVersion()
+    versionType = "${project.mod_version_type}"
     uploadFile = tasks.named("modrinthJar")
     gameVersions = [project.minecraft_version]
     loaders = ['fabric']
     dependencies = [
             new ModDependency('P7dR8mSH', 'required'),
-            new ModDependency('9s6osm5g', 'required'),
-            new ModDependency('mOgUt4GM', 'required')
+            new ModDependency('eUw8l2Vi', 'required'),
+            new ModDependency('9s6osm5g', 'optional'),
+            new ModDependency('mOgUt4GM', 'optional')
     ]
 }
 
